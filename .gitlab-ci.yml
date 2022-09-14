@@ -5,6 +5,7 @@ build-job:
   stage: build
   script:
     - echo "Hello"
+    - echo $CI_REGISTRY_USER 
 
 build2-job:
   stage: build
