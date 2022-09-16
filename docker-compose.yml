@@ -1,0 +1,7 @@
+version: '3.4'
+services:
+  mirror-api:
+    build: ./SmartMirrorHubV6.Api
+    ports:
+      - "10800:80"
+      - "10801:443"
