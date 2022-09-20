@@ -8,5 +8,6 @@ build-image:
     - docker:dind
   script:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
-    - docker build -t $CI_REGISTRY_IMAGE/api ./SmartMirrorHubV6.Api
+    - echo ls
+    - docker build -t $CI_REGISTRY_IMAGE/api -f SmartMirrorHubV6.Api/Dockerfile .
     - docker push $CI_REGISTRY_IMAGE/api
