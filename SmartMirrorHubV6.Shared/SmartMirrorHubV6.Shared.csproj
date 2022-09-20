@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Utilities.Common">
+      <HintPath>..\..\Utilities.Common.NET\Utilities.Common\bin\Debug\net6.0\Utilities.Common.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
