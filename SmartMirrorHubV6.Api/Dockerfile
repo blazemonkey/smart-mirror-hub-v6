@@ -8,6 +8,8 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY . .
+RUN echo $(ls)
+
 COPY ../Components Components/
 COPY ../SmartMirrorHubV6.Shared SmartMirrorHubV6.Shared/
 RUN dotnet restore SmartMirrorHubV6.Api/SmartMirrorHubV6.Api.csproj
