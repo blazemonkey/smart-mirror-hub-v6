@@ -5,5 +5,6 @@ namespace SmartMirrorHubV6.Api.Database;
 public interface IUnitOfWork
 {
     IComponentRepository Components { get; }
+    IMirrorRepository Mirrors { get; }
     IUserRepository Users { get; }
 }
