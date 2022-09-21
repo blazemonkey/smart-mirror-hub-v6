@@ -12,4 +12,9 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+	<ProjectCapability Include="ConfigurableFileNesting" />
+	<ProjectCapability Include="ConfigurableFileNestingFeatureEnabled" />
+  </ItemGroup>
+
 </Project>

@@ -19,4 +19,10 @@
     <ProjectReference Include="..\SmartMirrorHubV6.Shared\SmartMirrorHubV6.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Utilities.Common">
+      <HintPath>..\Components\Utilities.Common.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

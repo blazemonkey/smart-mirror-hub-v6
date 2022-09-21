@@ -7,7 +7,26 @@ namespace SmartMirrorHubV6.Api.Database.Repositories;
 
 public class ComponentRepository : BaseRepository, IComponentRepository
 {
-    public ComponentRepository(IConfiguration configuration) : base(configuration) { }
+    private ComponentSettingRepository _componentSettingRepository;
+    public ComponentRepository(IConfiguration configuration) : base(configuration) 
+    {
+        _componentSettingRepository = new ComponentSettingRepository(configuration);
+    }
+
+    public async Task<Component> GetById(int id, bool includeSettings = false)
+    {
+        var sql = "select * from components where id = @Id";
+        MySqlConnection conn = await OpenConnection();
+
+        var result = await conn.QuerySingleOrDefaultAsync<Component>(sql, new { Id = id });
+        if (result == null)
+            return null;
+
+        if (includeSettings)
+            result.Settings = await _componentSettingRepository.GetByComponentId(result.Id, conn);        
+
+        return result;
+    }
 
     public async Task<Component[]> GetAll(bool includeSettings = false, MySqlConnection connection = null)
     {
@@ -23,26 +42,10 @@ public class ComponentRepository : BaseRepository, IComponentRepository
         {
             foreach (var r in result)
             {
-                r.Settings = await GetComponentSettings(r.Id, conn);
+                r.Settings = await _componentSettingRepository.GetByComponentId(r.Id, conn);
             }
         }
 
-        if (connection == null)
-            await conn.CloseAsync();
-
-        return result.ToArray();
-    }
-
-    public async Task<ComponentSetting[]> GetComponentSettings(int componentId, MySqlConnection connection = null)
-    {
-        var sql = "select * from components_settings where componentid = @ComponentId";
-        MySqlConnection conn;
-        if (connection == null)
-            conn = await OpenConnection();
-        else
-            conn = connection;
-
-        var result = await conn.QueryAsync<ComponentSetting>(sql, new { ComponentId = componentId });
         if (connection == null)
             await conn.CloseAsync();
 
@@ -94,7 +97,7 @@ public class ComponentRepository : BaseRepository, IComponentRepository
         if (success == false)
             return false;
 
-        var dbSettings = await GetComponentSettings(component.Id, conn);
+        var dbSettings = await _componentSettingRepository.GetByComponentId(component.Id, conn);
         foreach (var setting in component.Settings)
         {
             setting.ComponentId = component.Id;

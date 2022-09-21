@@ -1,6 +1,7 @@
 ﻿using SmartMirrorHubV6.Shared.Attributes;
 using SmartMirrorHubV6.Shared.Components.Base;
 using SmartMirrorHubV6.Shared.Enums;
+using Utilities.Common.RestService;
 
 namespace SmartMirrorHubV6.Shared.Components.Data.Weather;
 
@@ -20,4 +21,11 @@ public class WeatherComponent : ApiComponent
     [ComponentInput("Country Code")]
     public string CountryCode { get; set; }
     #endregion
+
+    protected override async Task<ComponentResponse> Get()
+    {
+        var result = await RestService.Instance.Get<OpenWeatherCurrentRoot>($"{BaseUrl}weather?q={CityName},{CountryCode}&units=metric&APPID={AccessToken}");
+        var response = (OpenWeatherCurrentResponse)result;
+        return response;
+    }
 }

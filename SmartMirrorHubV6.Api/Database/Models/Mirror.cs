@@ -8,4 +8,5 @@ public class Mirror : BaseModel
     public bool Live { get; set; }
     public string Schedule { get; set; }
     public string Timezone { get; set; }
+    public MirrorComponent[] MirrorComponents { get; set; }
 }

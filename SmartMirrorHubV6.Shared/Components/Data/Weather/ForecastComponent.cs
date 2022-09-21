@@ -1,6 +1,7 @@
 ﻿using SmartMirrorHubV6.Shared.Attributes;
 using SmartMirrorHubV6.Shared.Components.Base;
 using SmartMirrorHubV6.Shared.Enums;
+using Utilities.Common.RestService;
 
 namespace SmartMirrorHubV6.Shared.Components.Data.Weather;
 
@@ -22,4 +23,13 @@ public class ForecastComponent : ApiComponent
     [ComponentInput("Show Count")]
     public int ShowCount { get; set; }
     #endregion
+
+    protected override async Task<ComponentResponse> Get()
+    {
+        var result = await RestService.Instance.Get<OpenWeatherForecastRoot>($"{BaseUrl}forecast?q={CityName},{CountryCode}&units=metric&APPID={AccessToken}");
+        var response = (OpenWeatherForecastResponse)result;
+        response.Forecasts = response.Forecasts.Take(ShowCount).ToList();
+
+        return response;
+    }
 }
