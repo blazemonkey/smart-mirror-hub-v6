@@ -20,14 +20,14 @@ public class MirrorComponentController : BaseController
         return mirrorComponents.ToArray();
     }
 
-    [HttpGet("mirrorCompoonentId/{mirrorComponentId}", Name = "GetMirrorComponent")]
+    [HttpGet("mirrorComponentId/{mirrorComponentId}", Name = "GetMirrorComponent")]
     public async Task<MirrorComponent> Get(int mirrorComponentId)
     {
         var mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponentId, true);
         return mirrorComponent;
     }
 
-    [HttpGet("mirrorCompoonentId/{mirrorComponentId}/retrieve", Name = "RetrieveMirrorComponent")]
+    [HttpGet("mirrorComponentId/{mirrorComponentId}/retrieve", Name = "RetrieveMirrorComponent")]
     public async Task<ComponentResponse> Retrieve(int mirrorComponentId)
     {
         var mirrorComponent = await Get(mirrorComponentId);
@@ -83,7 +83,7 @@ public class MirrorComponentController : BaseController
         return response;
     }
 
-    [HttpGet("mirrorCompoonentId/{mirrorComponentId}/history", Name = "GetLatestHistoryMirrorComponent")]
+    [HttpGet("mirrorComponentId/{mirrorComponentId}/history", Name = "GetLatestHistoryMirrorComponent")]
     public async Task<object> GetHistory(int mirrorComponentId)
     {
         var history = await UnitOfWork.ResponseHistory.GetLatestByMirrorComponentId(mirrorComponentId);
