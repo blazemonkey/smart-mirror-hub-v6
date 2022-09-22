@@ -9,5 +9,6 @@ public interface IUnitOfWork
     IMirrorRepository Mirrors { get; }
     IMirrorComponentRepository MirrorComponents { get; }
     IResponseHistoryRepository ResponseHistory { get; }
+    ITokenRepository Tokens { get; }
     IUserRepository Users { get; }
 }
