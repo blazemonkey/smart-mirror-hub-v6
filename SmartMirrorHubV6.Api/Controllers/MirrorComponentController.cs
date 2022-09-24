@@ -53,24 +53,25 @@ public class MirrorComponentController : BaseController
         if (component == null)
             return new ComponentResponse() { Error = "Could not find Component" };
 
-        if (component.Type == ComponentType.OAuthApi)
-        {
-            if (mirrorComponent.TokenId != null)
-            {
-                var token = await UnitOfWork.Tokens.GetById(mirrorComponent.TokenId.Value);
-                if (token != null)
-                {
-                    var apiOAuthComponent = (ApiOAuthComponent)component;
-                    await UpdateOAuthToken(apiOAuthComponent, token);
-                }
-            }
-        }
-
         ComponentResponse response = null;
         var stopwatch = new Stopwatch();
         try
         {
             stopwatch.Start();
+
+            if (component.Type == ComponentType.OAuthApi)
+            {
+                if (mirrorComponent.TokenId != null)
+                {
+                    var token = await UnitOfWork.Tokens.GetById(mirrorComponent.TokenId.Value);
+                    if (token != null)
+                    {
+                        var apiOAuthComponent = (ApiOAuthComponent)component;
+                        await UpdateOAuthToken(apiOAuthComponent, token);
+                    }
+                }
+            }
+
             response = await component.Retrieve();
         }
         catch (Exception ex)
@@ -114,7 +115,8 @@ public class MirrorComponentController : BaseController
     private async Task UpdateOAuthToken(ApiOAuthComponent component, Token token)
     {
         component.RefreshToken = token.RefreshToken;
-        
+        component.AccessToken = token.AccessToken;
+
         DateTime expiry;
         if (token.ExpiresAt > 0)
             expiry = DateTimeOffset.FromUnixTimeSeconds(token.ExpiresAt).UtcDateTime;
@@ -165,12 +167,16 @@ public class MirrorComponentController : BaseController
             }
         }
 
+        // set again as it might be updated
         component.AccessToken = token.AccessToken;
     }
 
     private object GetValue(MirrorComponentSetting setting, string typeName)
     {
-        var type = Type.GetType(typeName); 
+        var type = Type.GetType(typeName);
+        if (type == null)
+            type = Type.GetType(typeName + ", SmartMirrorHubV6.Shared");
+
         if (type == typeof(int))
             return int.Parse(setting.IntValue.ToString());
         else if (type == typeof(string))
