@@ -1,11 +1,6 @@
 ﻿using SmartMirrorHubV6.Shared.Attributes;
 using SmartMirrorHubV6.Shared.Components.Base;
 using SmartMirrorHubV6.Shared.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Utilities.Common.RestService;
 
 namespace SmartMirrorHubV6.Shared.Components.Data.Sports.Strava;
