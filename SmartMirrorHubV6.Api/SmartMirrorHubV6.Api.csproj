@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="dotnet swagger tofile --output SmartMirrorHubV6.Api.json bin\$(Configuration)\net6.0\SmartMirrorHubV6.Api.dll v1" />
+    <Exec Command="if $(ConfigurationName) == Debug (&#xD;&#xA;dotnet swagger tofile --output SmartMirrorHubV6.Api.json bin\$(Configuration)\net6.0\SmartMirrorHubV6.Api.dll v1&#xD;&#xA;)" />
   </Target>
 
 </Project>
