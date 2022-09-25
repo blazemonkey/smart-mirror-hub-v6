@@ -5,7 +5,9 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartMirrorHubV6.Api", "SmartMirrorHubV6.Api\SmartMirrorHubV6.Api.csproj", "{D3E1A48C-7AD8-49A6-9C45-107648A7A098}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMirrorHubV6.Shared", "SmartMirrorHubV6.Shared\SmartMirrorHubV6.Shared.csproj", "{7D164557-7C0B-4987-BD85-C4D3F531C033}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartMirrorHubV6.Shared", "SmartMirrorHubV6.Shared\SmartMirrorHubV6.Shared.csproj", "{7D164557-7C0B-4987-BD85-C4D3F531C033}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMirrorHubV6.Updater", "SmartMirrorHubV6.Updater\SmartMirrorHubV6.Updater.csproj", "{33DD8163-40AE-46A4-95A0-3B73BB52FD78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{7D164557-7C0B-4987-BD85-C4D3F531C033}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D164557-7C0B-4987-BD85-C4D3F531C033}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D164557-7C0B-4987-BD85-C4D3F531C033}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33DD8163-40AE-46A4-95A0-3B73BB52FD78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33DD8163-40AE-46A4-95A0-3B73BB52FD78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33DD8163-40AE-46A4-95A0-3B73BB52FD78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33DD8163-40AE-46A4-95A0-3B73BB52FD78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

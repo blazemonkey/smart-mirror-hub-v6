@@ -36,8 +36,12 @@ builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
 var unitOfWork = app.Services.GetService<IUnitOfWork>();
 
-var components = Component.GetComponents();
-await unitOfWork.Components.ReplaceAll(components);
+// if it's more than 1, then its the swagger tofile tool generating the JSON file
+if (args.Length == 0)
+{
+    var components = Component.GetComponents();
+    await unitOfWork.Components.ReplaceAll(components);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

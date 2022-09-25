@@ -8,7 +8,7 @@ public class MirrorComponent : BaseModel
     public bool Active { get; set; }
     public string Schedule { get; set; }    
     public MirrorComponentSetting[] Settings { get; set; }
-    public MirrorComponentUiElement UiElement { get; set; }
+    //public MirrorComponentUiElement UiElement { get; set; }
     public int? TokenId { get; set; }
     public DateTime LastUpdatedTimeUtc { get; set; }
 }
