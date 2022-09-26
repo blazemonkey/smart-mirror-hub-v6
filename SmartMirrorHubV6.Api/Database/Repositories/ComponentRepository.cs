@@ -16,7 +16,7 @@ public class ComponentRepository : BaseRepository, IComponentRepository
     public async Task<Component> GetById(int id, bool includeSettings = false)
     {
         var sql = "select * from components where id = @Id";
-        MySqlConnection conn = await OpenConnection();
+        using var conn = await OpenConnection();
 
         var result = await conn.QuerySingleOrDefaultAsync<Component>(sql, new { Id = id });
         if (result == null)
