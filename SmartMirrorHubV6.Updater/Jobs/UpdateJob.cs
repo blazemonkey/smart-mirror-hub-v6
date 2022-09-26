@@ -53,15 +53,15 @@ public class UpdateJob : BaseJob
                         continue;
                     }
 
-                    if (mc.LastUpdatedTimeUtc.DateTime != DateTime.MinValue && DateTime.UtcNow.Subtract(mc.LastUpdatedTimeUtc.DateTime).TotalSeconds < (component.Interval >= 60 ? (component.Interval - 10) : component.Interval)) // 10 second buffer
-                    {
-                        _logger.LogInformation($"Skipping '{mc.Name}' component because it does not need to be run yet");
-                        continue;
-                    }
-
                     if (ShowMirrorComponent(mc, m) == false)
                     {
                         _logger.LogInformation($"Skipping '{mc.Name}' component because it is not in schedule");
+                        continue;
+                    }
+
+                    if (mc.LastUpdatedTimeUtc.DateTime != DateTime.MinValue && DateTime.UtcNow.Subtract(mc.LastUpdatedTimeUtc.DateTime).TotalSeconds < (component.Interval >= 60 ? (component.Interval - 10) : component.Interval)) // 10 second buffer
+                    {
+                        _logger.LogInformation($"Skipping '{mc.Name}' component because it does not need to be run yet");
                         continue;
                     }
 

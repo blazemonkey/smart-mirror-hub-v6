@@ -19,7 +19,7 @@ public class TokenRepository : BaseRepository, ITokenRepository
     public async Task<bool> Update(Token token)
     {
         var sql = "update tokens set clientId = @ClientId, accessToken = @AccessToken, refreshToken = @RefreshToken, expiresAt = @ExpiresAt, expiresIn = @ExpiresIn where id = @Id";
-        var conn = await OpenConnection();
+        using var conn = await OpenConnection();
         var result = await conn.ExecuteAsync(sql, token);
         var success = result > 0;
         return success;

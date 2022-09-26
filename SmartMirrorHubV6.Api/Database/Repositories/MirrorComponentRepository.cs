@@ -37,7 +37,7 @@ public class MirrorComponentRepository : BaseRepository, IMirrorComponentReposit
     public async Task<bool> Update(MirrorComponent component)
     {
         var sql = "update mirrors_components set active = @Active, name = @Name, schedule = @Schedule, tokenId = @TokenId, lastUpdatedTimeUtc = @LastUpdatedTimeUtc where id = @Id";
-        var conn = await OpenConnection();
+        using var conn = await OpenConnection();
         var result = await conn.ExecuteAsync(sql, component);
         var success = result > 0;
         return success;

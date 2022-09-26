@@ -13,6 +13,13 @@ builder.Services.AddQuartz(q =>
         .ForJob(updateJob)
         .WithIdentity($"{nameof(UpdateJob)}-Trigger")
         .WithCronSchedule("0 * * * * ?"));
+
+    var cleanJob = new JobKey(nameof(CleanJob));
+    q.AddJob<CleanJob>(o => o.WithIdentity(cleanJob));
+    q.AddTrigger(o => o
+        .ForJob(cleanJob)
+        .WithIdentity($"{nameof(CleanJob)}-Trigger")
+        .WithCronSchedule("0 0 0 * * ?"));
 });
 
 builder.Services.AddQuartzHostedService(
