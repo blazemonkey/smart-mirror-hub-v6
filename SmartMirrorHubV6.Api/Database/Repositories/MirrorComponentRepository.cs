@@ -34,6 +34,37 @@ public class MirrorComponentRepository : BaseRepository, IMirrorComponentReposit
         return result;
     }
 
+    public async Task<MirrorComponent[]> GetAllByUserIdAndMirrorName(int userId, string mirrorName, bool includeSettings = false, bool includeUiElement = false)
+    {
+        var sql = "select mc.* from mirrors m join mirrors_components mc on m.id = mc.mirrorid where userId = @userId and m.name = @MirrorName";
+        using var conn = await OpenConnection();
+        var result = await conn.QueryAsync<MirrorComponent>(sql, new { UserId = userId, MirrorName = mirrorName });
+        if (result == null)
+            return null;
+
+        if (includeSettings)
+        {
+            foreach (var r in result)
+            {
+                sql = "select * from mirrors_components_settings where mirrorcomponentid = @MirrorComponentId";
+                var settings = await conn.QueryAsync<MirrorComponentSetting>(sql, new { MirrorComponentId = r.Id });
+                r.Settings = settings.ToArray();
+            }
+        }
+
+        if (includeUiElement)
+        {
+            foreach (var r in result)
+            {
+                sql = "select * from mirrors_components_ui_elements where mirrorcomponentid = @MirrorComponentId";
+                var element = await conn.QuerySingleOrDefaultAsync<MirrorComponentUiElement>(sql, new { MirrorComponentId = r.Id });
+                r.UiElement = element;
+            }
+        }
+
+        return result.ToArray();
+    }
+
     public async Task<bool> Update(MirrorComponent component)
     {
         var sql = "update mirrors_components set active = @Active, name = @Name, schedule = @Schedule, tokenId = @TokenId, lastUpdatedTimeUtc = @LastUpdatedTimeUtc where id = @Id";

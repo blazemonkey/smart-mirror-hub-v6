@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SmartMirrorHubV6.Api.Database;
 using SmartMirrorHubV6.Api.Database.Models;
+using SmartMirrorHubV6.Api.Models;
 using SmartMirrorHubV6.Shared.Components.Base;
 using SmartMirrorHubV6.Shared.Enums;
 using System.Diagnostics;
@@ -22,6 +23,28 @@ public class MirrorComponentController : BaseController
     {
         var mirrorComponents = await UnitOfWork.MirrorComponents.GetAllByMirrorId(mirrorId);
         return mirrorComponents.ToArray();
+    }
+
+    [HttpGet("userId/{userId}/mirrorName/{mirrorName}", Name = "GetAllMirrorComponentsByUserIdAndMirrorName")]
+    public async Task<MirrorComponentResponse[]> GetAllByUserIdAndMirrorName(int userId, string mirrorName)
+    {
+        var responsesList = new List<MirrorComponentResponse>();
+        var mirrorComponents = await UnitOfWork.MirrorComponents.GetAllByUserIdAndMirrorName(userId, mirrorName, false, true);
+        foreach (var mc in mirrorComponents)
+        {
+            var response = new MirrorComponentResponse()
+            {
+                MirrorId = mc.MirrorId,
+                Name = mc.Name,
+                UiElement = mc.UiElement,
+                Component = await UnitOfWork.Components.GetById(mc.ComponentId),
+                Response = await GetHistory(mc.Id)
+            };
+
+            responsesList.Add(response);
+        }
+
+        return responsesList.ToArray();
     }
 
     [HttpGet("mirrorComponentId/{mirrorComponentId}", Name = "GetMirrorComponent")]

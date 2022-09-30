@@ -14,6 +14,6 @@ public class ComponentController : BaseController
     public async Task<Component[]> GetAll()
     {
         var components = await UnitOfWork.Components.GetAll(includeSettings: true);
-        return components.ToArray();
+        return components.ToArray();    
     }
 }
