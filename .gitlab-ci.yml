@@ -12,3 +12,5 @@ build-image:
     - docker push $CI_REGISTRY_IMAGE/api
     - docker build -t $CI_REGISTRY_IMAGE/updater -f SmartMirrorHubV6.Updater/Dockerfile .
     - docker push $CI_REGISTRY_IMAGE/updater
+    - docker build -t $CI_REGISTRY_IMAGE/website -f SmartMirrorHubV6.Website/Dockerfile .
+    - docker push $CI_REGISTRY_IMAGE/website
