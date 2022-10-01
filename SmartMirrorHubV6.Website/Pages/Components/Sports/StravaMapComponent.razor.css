@@ -1,0 +1,19 @@
+﻿.map-title {
+    font-size: 24px;
+}
+
+.map-summary {
+    font-size: 20px;
+}
+
+.map-laps {
+    font-size: 16px;
+}
+
+.lap-name {
+    width: 80px;
+}
+
+.lap-distance {
+    width: 80px;
+}

@@ -5,6 +5,7 @@ using SmartMirrorHubV6.Api.Models;
 using SmartMirrorHubV6.Shared.Components.Base;
 using SmartMirrorHubV6.Shared.Enums;
 using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Utilities.Common.Helpers;
@@ -32,13 +33,19 @@ public class MirrorComponentController : BaseController
         var mirrorComponents = await UnitOfWork.MirrorComponents.GetAllByUserIdAndMirrorName(userId, mirrorName, false, true);
         foreach (var mc in mirrorComponents)
         {
+            var component = await UnitOfWork.Components.GetById(mc.ComponentId);
+            if (component == null)
+                continue;
+
             var response = new MirrorComponentResponse()
             {
                 MirrorId = mc.MirrorId,
+                MirrorComponentId = mc.Id,
                 Name = mc.Name,
                 UiElement = mc.UiElement,
-                Component = await UnitOfWork.Components.GetById(mc.ComponentId),
-                Response = await GetHistory(mc.Id)
+                ComponentName = component.Name,
+                ComponentAuthor = component.Author,
+                ComponentHasJavaScript = component.HasJavaScript
             };
 
             responsesList.Add(response);
@@ -52,6 +59,26 @@ public class MirrorComponentController : BaseController
     {
         var mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponentId, true);
         return mirrorComponent;
+    }
+
+    [HttpGet("mirrorComponentId/{mirrorComponentId}/js", Name = "GetMirrorComponentJavaScript")]
+    public async Task<byte[]> GetJavaScript(int mirrorComponentId)
+    {
+        var mirrorComponent = await Get(mirrorComponentId);
+        if (mirrorComponent == null)
+            return null;
+
+        var dbComponent = await UnitOfWork.Components.GetById(mirrorComponent.ComponentId, true);
+        if (dbComponent == null)
+            return null;
+
+        var settings = mirrorComponent.Settings.Select(x => (PropertyName: dbComponent.Settings.FirstOrDefault(z => z.Id == x.ComponentSettingId).Name, Value: GetValue(x, dbComponent.Settings.FirstOrDefault(z => z.Id == x.ComponentSettingId).Type)));
+        var component = BaseComponent.GetComponent(dbComponent.Author, dbComponent.Name, settings.ToArray());
+        if (component == null)
+            return null;
+
+        var js = component.GetJavaScript(mirrorComponent.Name);
+        return Encoding.ASCII.GetBytes(js);
     }
 
     [HttpGet("mirrorComponentId/{mirrorComponentId}/retrieve", Name = "RetrieveMirrorComponent")]
@@ -124,6 +151,7 @@ public class MirrorComponentController : BaseController
         return response;
     }
 
+    [Produces(typeof(object))]
     [HttpGet("mirrorComponentId/{mirrorComponentId}/history", Name = "GetLatestHistoryMirrorComponent")]
     public async Task<object> GetHistory(int mirrorComponentId)
     {

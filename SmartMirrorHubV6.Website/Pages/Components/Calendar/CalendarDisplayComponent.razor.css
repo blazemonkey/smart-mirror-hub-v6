@@ -1,0 +1,14 @@
+﻿.calendar-item {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+}
+
+.not-current-month {
+    color: gray;
+}
+
+.busy-date {
+    color: yellow;
+    font-weight: bold;
+}

@@ -1,0 +1,8 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.SocialMedia;
+@inherits MirrorGenericBaseComponent<InstagramMediaListResponse>
+
+@if (Response != null && IsShowing)
+{
+    <img class="position-absolute rounded" src="@Response.MediaUrls[active]" style="width: @(Response.MaxImageWidth + "px"); height: @(Response.MaxImageHeight + "px");" />
+    <div class="position-absolute instagram-username" style="margin-top: @(Response.MaxImageHeight + "px")">@@@Response.Username</div>
+}

@@ -1,0 +1,15 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.Calendar;
+@inherits MirrorGenericBaseComponent<GoogleCalendarApiResponse>
+
+@if (Response != null && IsShowing)
+{
+    <Header Name="CALENDAR" ShowHeader="@ShowHeader" />
+    @foreach (var e in Response.Entries)
+    {
+        <div class="d-flex">
+            <div>@e.Date.ToString("dddd MMMM d")</div>
+            <div class="mx-2">-</div>
+            <div><b>@e.Name</b></div>
+        </div>
+    }
+} 

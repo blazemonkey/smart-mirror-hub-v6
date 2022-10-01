@@ -1,0 +1,34 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.Weather;
+@inherits MirrorGenericBaseComponent<OpenWeatherCurrentResponse>
+
+@if (Response != null && IsShowing)
+{
+    <div class="weather-container">
+        <div class="weather-col-container">
+            <div class="weather-row-container">
+                <img src=@($"images/weather/sunrise.png") />
+                <div>@Response.SunriseTime.ToLocalTime().ToString("HH:mm:ss tt")</div>
+            </div>
+            <div class="weather-row-container">
+                <img src=@($"images/weather/sunset.png") />
+                <div>@Response.SunsetTime.ToLocalTime().ToString("HH:mm:ss tt")</div>
+            </div>
+            <div class="weather-row-container weather-row-bottom">
+                <img class="icon" src=@($"images/weather/{ Response.Icon }.png") />
+                <div class="description">@Response.Description</div>
+            </div>
+        </div>
+        <div class="weather-bubble">
+            <img src=@($"images/weather/temperature.png") />
+            <div class="circle">
+                <div class="humidity">@Response.Temperature.Value.ToString("F1")°C</div>
+            </div>
+        </div>
+        <div class="weather-bubble">
+            <img src=@($"images/weather/humidity.png") />
+            <div class="circle">
+                <div class="humidity">@Response.Humidity.Value.ToString("F0")%</div>
+            </div>
+        </div>
+    </div>
+}

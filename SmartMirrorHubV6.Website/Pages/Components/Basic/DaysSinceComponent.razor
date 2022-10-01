@@ -1,0 +1,19 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.Basic;
+@inherits MirrorGenericBaseComponent<DaysSinceResponse>
+
+@if (Response != null && IsShowing)
+{
+    <div class="d-flex align-items-center">
+        @if (string.IsNullOrEmpty(Response.Icon) == false)
+        {
+            <img class="days-icon "src=@($"images/days-since/{Response.Icon}.png") />
+        } 
+        <div class="mx-1">DAY</div>
+        <div class="font-weight-bold">@Response.NumberOfDays</div>
+        @if (Response.ShowName)
+        { 
+            <div class="mx-1">-</div>
+            <div>@Response.EventName</div>
+        }
+    </div>
+}

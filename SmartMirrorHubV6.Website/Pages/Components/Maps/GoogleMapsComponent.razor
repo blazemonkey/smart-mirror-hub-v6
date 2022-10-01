@@ -1,0 +1,26 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.Maps;
+@inherits MirrorGenericBaseComponent<GoogleMapsResponse>
+
+@if (Response != null && IsShowing)
+{
+    if (Response.ShowMap && string.IsNullOrEmpty(UniqueMapName) == false)
+    {
+        <div id="map@(UniqueMapName)" style="width:@(Response.MapWidth + "px");height:@(Response.MapHeight + "px");"></div>
+    }
+
+    <Header Name="MAPS" ShowHeader="@ShowHeader" />
+    <div class="d-flex flex-row align-items-center maps-destination">
+        <div class="m-1 font-weight-bold">@Response.Destination</div>
+        <div class="m-1">(updated @DateTime.Now.ToString("HH:mm:ss"))</div>
+    </div>
+    <div>
+        @foreach (var r in Response.Routes)
+        {
+            <div class="d-flex justify-content-end">
+                <div class="mx-1">@r.RouteName</div>
+                <div class="mx-1">-</div>
+                <div class="mx-1"><b>@r.Duration</b></div>
+            </div>
+        }
+    </div>
+} 

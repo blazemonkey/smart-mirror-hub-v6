@@ -5,8 +5,10 @@ namespace SmartMirrorHubV6.Api.Models;
 public class MirrorComponentResponse
 {
     public int MirrorId { get; set; }
+    public int MirrorComponentId { get; set; }
     public string Name { get; set; }
-    public Component Component { get; set; }
+    public string ComponentName { get; set; }
+    public string ComponentAuthor { get; set; }
+    public bool ComponentHasJavaScript { get; set; }
     public MirrorComponentUiElement UiElement { get; set; }
-    public object Response { get; set; }
 }

@@ -54,7 +54,7 @@ public class ComponentRepository : BaseRepository, IComponentRepository
 
     public async Task<bool> Insert(Component component, MySqlConnection connection = null)
     {
-        var sql = "insert into components (name, description, author, category, `interval`, type, voiceName, hasJs) values (@Name, @Description, @Author, @Category, @Interval, @Type, @VoiceName, @HasJavaScript)";
+        var sql = "insert into components (name, description, author, category, `interval`, type, voiceName, hasJavaScript) values (@Name, @Description, @Author, @Category, @Interval, @Type, @VoiceName, @HasJavaScript)";
         MySqlConnection conn;
         if (connection == null)
             conn = await OpenConnection();
@@ -85,7 +85,7 @@ public class ComponentRepository : BaseRepository, IComponentRepository
 
     public async Task<bool> Update(Component component, MySqlConnection connection = null)
     {
-        var sql = "update components set name = @Name, description = @Description, category = @Category, `interval` = @Interval, type = @Type, voiceName = @VoiceName, hasJs = @HasJavaScript where id = @Id";
+        var sql = "update components set name = @Name, description = @Description, category = @Category, `interval` = @Interval, type = @Type, voiceName = @VoiceName, hasJavaScript = @HasJavaScript where id = @Id";
         MySqlConnection conn;
         if (connection == null)
             conn = await OpenConnection();

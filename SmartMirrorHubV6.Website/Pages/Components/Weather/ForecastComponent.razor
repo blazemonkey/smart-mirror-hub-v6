@@ -1,0 +1,30 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.Weather;
+@inherits MirrorGenericBaseComponent<OpenWeatherForecastResponse>
+
+@if (Response != null && IsShowing)
+{
+    <div>
+        @foreach (var f in Response.Forecasts)
+        {
+            <div class="d-flex forecast-row">
+                <div class="icon-container">
+                    <img class="icon" src=@($"images/weather/{ f.Icon }.png") />
+                </div>
+                <div class="datetime">
+                    <div>@f.Timestamp.ToLocalTime().ToString("ddd HH:mm")</div>
+                </div>
+                <div class="temperature">@f.Temperature.Value.ToString("F")°C </div>
+                <div class="humidity">@f.Humidity% </div>
+                <div class="category">@f.Group</div>
+                @if (f.Rain != null && f.Rain != 0)
+                {
+                    <div class="rain">@f.Rain.Value.ToString("F3")mm</div>
+                }
+                else
+                {
+                    <div class="rain"></div>
+                }
+            </div>
+        }
+    </div>
+}

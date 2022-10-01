@@ -1,0 +1,17 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.CouncilCollection;
+@inherits MirrorGenericBaseComponent<CouncilCollectionResponse>
+
+@if (Response != null && IsShowing)
+{
+    <Header Name="COLLECTION" ShowHeader="@ShowHeader" />
+    <div class="collection-address">@Response.StreetAddress</div>
+    <div class="collection-container">
+        @foreach (var c in Response.Collections)
+        {
+            <div class="d-flex align-items-center">
+                <img class="collection-icon" src=@($"images/collection/{(int)c.Type}.png") />
+                <div class="@(c.CollectionDate < DateTime.Now.Date.AddDays(7) ? "font-weight-bold" : "font-weight-normal")">@c.CollectionDate.ToString("dddd MMMM d")</div>
+            </div>
+        }
+    </div>
+} 

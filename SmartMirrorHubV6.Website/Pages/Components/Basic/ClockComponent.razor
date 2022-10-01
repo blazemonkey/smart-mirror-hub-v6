@@ -1,0 +1,10 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.Basic;
+@inherits MirrorGenericBaseComponent<ClockResponse>
+
+@if (Response != null && IsShowing)
+{
+    <div class="d-flex flex-column align-items-center">
+        <div class="clock-date">@Response.DateTime.ToString("dddd MMMM dd yyyy")</div>
+        <div class="clock-time">@Response.DateTime.ToString("HH:mm")</div>
+    </div>
+}

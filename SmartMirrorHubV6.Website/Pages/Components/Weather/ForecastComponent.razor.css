@@ -1,0 +1,31 @@
+﻿.forecast-row {
+    line-height: 38px;
+}
+
+.icon-container {
+    width: 50px;
+}
+
+.icon {
+    width: 24px;
+}
+
+.datetime {
+    width: 90px;
+}
+
+.temperature {
+    width: 80px;
+}
+
+.humidity {
+    width: 50px;
+}
+
+.category {
+    width: 80px;
+}
+
+.rain {
+    width: 90px;
+}

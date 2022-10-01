@@ -1,0 +1,19 @@
+﻿.strava-container .type {
+    width: 140px;
+}
+
+.strava-container .count {
+    width: 60px;
+}
+
+.strava-container .distance {
+    width: 80px;
+}
+
+.strava-container .elapsed {
+    width: 160px;
+}
+
+.strava-container .elevation {
+    width: 60px;
+}

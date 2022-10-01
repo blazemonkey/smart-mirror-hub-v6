@@ -1,0 +1,30 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.Sports.Strava;
+@inherits MirrorGenericBaseComponent<StravaResponse>
+
+@if (Response != null && IsShowing)
+{
+    <Header Name="STRAVA" ShowHeader="@ShowHeader" />
+    <div class="strava-container">
+        <div class="d-flex">
+            <div class="type">last 30 days</div>
+            <div class="count">#@Response.RecentRunTotals.Count</div>
+            <div class="distance">@Math.Round(Response.RecentRunTotals.Distance / 1000)km</div>
+            <div class="elapsed">@Response.RecentRunTotals.MovingTime</div>
+            <div class="elevation">@Math.Round(@Response.RecentRunTotals.ElevationGain)m</div>
+        </div>
+        <div class="d-flex">
+            <div class="type">@DateTime.Now.Year</div>
+            <div class="count">#@Response.YearToDateRunTotals.Count</div>
+            <div class="distance">@Math.Round(Response.YearToDateRunTotals.Distance / 1000)km</div>
+            <div class="elapsed">@Response.YearToDateRunTotals.MovingTime</div>
+            <div class="elevation">@Math.Round(@Response.YearToDateRunTotals.ElevationGain)m</div>
+        </div>
+        <div class="d-flex">
+            <div class="type">all time</div>
+            <div class="count">#@Response.AllRunTotals.Count</div>
+            <div class="distance">@Math.Round(Response.AllRunTotals.Distance / 1000)km</div>
+            <div class="elapsed">@Response.AllRunTotals.MovingTime</div>
+            <div class="elevation">@Math.Round(@Response.AllRunTotals.ElevationGain)m</div>
+        </div>
+    </div>
+}

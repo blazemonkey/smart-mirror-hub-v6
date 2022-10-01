@@ -1,0 +1,7 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.News;
+@inherits MirrorGenericBaseComponent<NewsApiResponse>
+
+@if (Response != null && IsShowing)
+{
+    <div class="text-center">@Response.Headlines[active]</div>
+}

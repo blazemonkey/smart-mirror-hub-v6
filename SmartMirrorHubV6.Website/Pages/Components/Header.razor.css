@@ -1,0 +1,6 @@
+﻿.component-header {
+    color: darkgray;
+    border-bottom: 1px solid darkgray;
+    padding: 6px;
+    font-weight: bold;
+}

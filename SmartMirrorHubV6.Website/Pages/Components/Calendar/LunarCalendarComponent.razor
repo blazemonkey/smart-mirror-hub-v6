@@ -1,0 +1,22 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.Calendar;
+@inherits MirrorGenericBaseComponent<LunarCalendarResponse>
+
+
+@if (Response != null && IsShowing)
+{
+    <div class="d-flex flex-column align-items-center">
+        <div class="today font-weight-bold">@Response.Today</div>
+        <div class="special-event">
+            @foreach (var e in Response.TodaySpecialEvents)
+                {
+                    <div>@e</div>
+                }
+        </div>
+        <div class="upcoming-events d-row align-items-center">
+            @foreach (var e in Response.UpcomingSpecialEvents)
+                {
+                    <div>@e</div>
+                }
+        </div>
+    </div>
+}

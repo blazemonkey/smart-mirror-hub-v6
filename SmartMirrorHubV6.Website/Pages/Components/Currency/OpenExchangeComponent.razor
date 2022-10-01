@@ -1,0 +1,13 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.Currency;
+@inherits MirrorGenericBaseComponent<OpenExchangeResponse>
+
+@if (Response != null && IsShowing)
+{
+    <Header Name="CURRENCY" ShowHeader="@ShowHeader" />
+    @foreach (var r in Response.Rates)
+    {
+        <div class="d-flex align-items-center">
+            <div>1 @Response.Base = @r.Rate.ToString("F3") <b>@r.Code</b></div>
+        </div>
+    }
+} 

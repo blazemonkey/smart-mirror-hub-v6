@@ -32,11 +32,14 @@ public abstract class BaseComponent
             if (instance.Author != componentAuthor || instance.Name != componentName)
                 continue;
 
-            var properties = c.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var p in properties.Where(x => Attribute.IsDefined(x, typeof(ComponentInputAttribute))))
+            if (settings != null)
             {
-                var setting = settings.FirstOrDefault(x => x.PropertyName == p.Name);
-                p.SetValue(instance, setting.Value);
+                var properties = c.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                foreach (var p in properties.Where(x => Attribute.IsDefined(x, typeof(ComponentInputAttribute))))
+                {
+                    var setting = settings.FirstOrDefault(x => x.PropertyName == p.Name);
+                    p.SetValue(instance, setting.Value);
+                }
             }
 
             return instance;

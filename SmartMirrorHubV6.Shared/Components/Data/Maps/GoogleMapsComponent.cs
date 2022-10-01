@@ -1,5 +1,6 @@
 ﻿using SmartMirrorHubV6.Shared.Attributes;
 using SmartMirrorHubV6.Shared.Components.Base;
+using SmartMirrorHubV6.Shared.Components.Resources.JavaScript;
 using SmartMirrorHubV6.Shared.Enums;
 using System;
 using System.Collections.Generic;
@@ -60,7 +61,7 @@ public class GoogleMapsComponent : ApiComponent
         if (suggested != null)
             routes.Add(suggested);
 
-        if (!routes.Any())
+        if (routes.Any() == false)
             return new ComponentResponse() { Error = "Could not get data for any routes" };
 
         var response = new GoogleMapsResponse()
@@ -108,7 +109,6 @@ public class GoogleMapsComponent : ApiComponent
 
     public override string GetJavaScript(string uniqueName)
     {
-        return "";
-        //return GoogleMap.GetInit(uniqueName, MapKey, MapStyle);
+        return GoogleMap.GetInit(uniqueName, MapKey, MapStyle);
     }
 }

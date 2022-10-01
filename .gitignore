@@ -4,6 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 appsettings.Development.json
+SmartMirrorHubV6.Website/wwwroot/scripts/mirror-scripts.js
 
 # User-specific files
 *.rsuser

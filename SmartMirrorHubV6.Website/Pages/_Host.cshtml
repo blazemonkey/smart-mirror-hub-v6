@@ -1,0 +1,51 @@
+﻿@page "/"
+@namespace SmartMirrorHubV6.Website.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Mirror Hub</title>
+    <base href="~/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link href="css/site.css" rel="stylesheet" />
+    <link href="SmartMirrorHubV6.Website.styles.css" rel="stylesheet" />
+</head>
+<body>
+    <component type="typeof(App)" render-mode="Server" />
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    
+    @*<script src="_framework/blazor.server.js"></script>
+    <script src="~/scripts/mirror-scripts.js"></script>*@
+    <script src="~/scripts/update-google-map.js"></script>
+    <script src="_framework/blazor.server.js" autostart="false"></script>
+    <script>
+        Blazor.start().then(function () {
+            setTimeout(function () {
+                var customScript = document.createElement('script');
+                customScript.setAttribute('src', 'scripts/mirror-scripts.js');
+                document.head.appendChild(customScript);
+            }, 1000);
+
+      });
+    </script>
+</body>
+</html>
