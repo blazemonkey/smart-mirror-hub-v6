@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 using SmartMirrorHubV6.Website.Pages.Components;
 using System.Reflection;
 using System.Text;
@@ -22,13 +23,13 @@ public partial class Mirror : BaseComponent
 
     private RenderFragment ComponentsRender { get; set; }
     private List<MirrorBaseComponent> OnScreenMirrorComponents { get; set; }
+    private HubConnection HubConnection { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
         IsLoading = true;
         try
         {
-            System.Diagnostics.Debug.WriteLine("lol");
             OnScreenMirrorComponents = new List<MirrorBaseComponent>();
             var client = new MirrorApiClient(ApiUrl, HttpClient);
             var mirrorComponents = await client.GetAllMirrorComponentsByUserIdAndMirrorNameAsync(UserId, MirrorName);
@@ -40,40 +41,54 @@ public partial class Mirror : BaseComponent
             {
                 await RenderComponent(mirrorComponents.ToArray());
 
-                //    _hubConnection.Remove("RefreshMirrorComponents");
-                //    _hubConnection.On("RefreshMirrorComponents", (int userId, string mirrorName, UpdaterComponentResponse[] responses) =>
-                //    {
-                //        if (userId != UserId || mirrorName != MirrorName)
-                //            return;
+                if (HubConnection != null)
+                    await HubConnection.StopAsync();
 
-                //        foreach (var r in responses)
-                //        {
-                //            var component = OnScreenMirrorComponents.FirstOrDefault(x => x.Name == r.MirrorComponentName);
-                //            if (component == null)
-                //                continue;
+                HubConnection = new HubConnectionBuilder()
+                    .WithUrl(HubUrl)
+                    .WithAutomaticReconnect()
+                    .Build();
 
-                //            component.Update(r.ComponentResponse);
-                //        }
-                //    });
+                HubConnection.Reconnected += HubConnection_Reconnected;
+                await HubConnection.StartAsync();
+                if (HubConnection.State == HubConnectionState.Connected)                
+                    await HubConnection.InvokeAsync("SubscribeToMirror", UserId, MirrorName);
 
-                //    _hubConnection.Remove("ToggleMirrorComponents");
-                //    _hubConnection.On("ToggleMirrorComponents", (int userId, string mirrorName, bool show, string[] mirrorComponentNames) =>
-                //    {
-                //        if (userId != UserId || mirrorName != MirrorName)
-                //            return;
 
-                //        foreach (var name in mirrorComponentNames)
-                //        {
-                //            var component = OnScreenMirrorComponents.FirstOrDefault(x => x.Name == name);
-                //            if (component == null)
-                //                continue;
+                HubConnection.Remove("RefreshMirrorComponents");
+                HubConnection.On("RefreshMirrorComponents", (int userId, string mirrorName, RefreshComponentResponse[] responses) =>
+                {
+                    if (userId != UserId || mirrorName != MirrorName)
+                        return;
 
-                //            if (show)
-                //                component.Show();
-                //            else
-                //                component.Hide();
-                //        }
-                //    });
+                    foreach (var r in responses)
+                    {
+                        var component = OnScreenMirrorComponents.FirstOrDefault(x => x.MirrorComponentId == r.MirrorComponentId);
+                        if (component == null)
+                            continue;
+
+                        component.Update(r.ComponentResponse);
+                    }
+                });
+
+                HubConnection.Remove("ToggleMirrorComponents");
+                HubConnection.On("ToggleMirrorComponents", (int userId, string mirrorName, bool show, string[] mirrorComponentNames) =>
+                {
+                    if (userId != UserId || mirrorName != MirrorName)
+                        return;
+
+                    foreach (var name in mirrorComponentNames)
+                    {
+                        var component = OnScreenMirrorComponents.FirstOrDefault(x => x.Name == name);
+                        if (component == null)
+                            continue;
+
+                        if (show)
+                            component.Show();
+                        else
+                            component.Hide();
+                    }
+                });
 
                 //    _hubConnection.On("TriggerMirrorComponents", async (int userId, string mirrorName, string[] mirrorComponentNames) =>
                 //    {
@@ -103,8 +118,7 @@ public partial class Mirror : BaseComponent
 
     private async Task HubConnection_Reconnected(string arg)
     {
-        Console.WriteLine("Reconnected");
-        //await RestService.Instance.Post<object>($"{HubUrl}/joingroup/{MirrorName}/{_hubConnection.ConnectionId}");
+        await HubConnection.InvokeAsync("SubscribeToMirror", UserId, MirrorName);
     }
 
     private MirrorBaseComponent[] GetComponents()

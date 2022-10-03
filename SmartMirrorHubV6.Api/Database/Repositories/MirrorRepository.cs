@@ -27,11 +27,17 @@ public class MirrorRepository : BaseRepository, IMirrorRepository
         return result.ToArray();
     }
 
-    public async Task<Mirror> GetById(int id)
+    public async Task<Mirror> GetById(int id, bool includeComponents = false)
     {
         var sql = "select * from mirrors where id = @Id";
         using var conn = await OpenConnection();
         var result = await conn.QuerySingleOrDefaultAsync<Mirror>(sql, new { Id = id });
+        if (includeComponents)
+        {
+            sql = "select * from mirrors_components where mirrorid = @MirrorId";
+            var components = await conn.QueryAsync<MirrorComponent>(sql, new { MirrorId = id });
+            result.MirrorComponents = components.ToArray();
+        }
         return result;
     }
 }

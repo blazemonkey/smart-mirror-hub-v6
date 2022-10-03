@@ -14,10 +14,12 @@ public class BaseComponent : ComponentBase
     [Inject]
     public HttpClient HttpClient { get; set; }
     protected string ApiUrl { get; set; }
+    protected string HubUrl { get; set; }
 
     protected override void OnInitialized()
     {
         ApiUrl = Configuration["ApiUrl"];
+        HubUrl = Configuration["HubUrl"];
         base.OnInitialized();
     }
 }

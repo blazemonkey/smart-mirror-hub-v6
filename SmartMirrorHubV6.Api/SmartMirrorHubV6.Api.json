@@ -92,6 +92,47 @@
         }
       }
     },
+    "/Mirror/{mirrorId}": {
+      "post": {
+        "tags": [
+          "Mirror"
+        ],
+        "operationId": "RefreshMirrorComponentsByMirrorId",
+        "parameters": [
+          {
+            "name": "mirrorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshComponentResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshComponentResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshComponentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/MirrorComponent/mirrorId/{mirrorId}": {
       "get": {
         "tags": [
@@ -281,6 +322,37 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/MirrorComponent/mirrorComponentId/{mirrorComponentId}/toggle": {
+      "post": {
+        "tags": [
+          "MirrorComponent"
+        ],
+        "operationId": "ShowMirrorComponent",
+        "parameters": [
+          {
+            "name": "mirrorComponentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "show",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -795,6 +867,19 @@
           "layer": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RefreshComponentResponse": {
+        "type": "object",
+        "properties": {
+          "mirrorComponentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "componentResponse": {
+            "nullable": true
           }
         },
         "additionalProperties": false

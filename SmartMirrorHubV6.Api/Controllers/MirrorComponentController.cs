@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using SmartMirrorHubV6.Api.Database;
 using SmartMirrorHubV6.Api.Database.Models;
+using SmartMirrorHubV6.Api.Hubs;
 using SmartMirrorHubV6.Api.Models;
 using SmartMirrorHubV6.Shared.Components.Base;
 using SmartMirrorHubV6.Shared.Enums;
@@ -17,7 +19,11 @@ namespace SmartMirrorHubV6.Api.Controllers;
 [Route("[controller]")]
 public class MirrorComponentController : BaseController
 {
-    public MirrorComponentController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+    private IHubContext<MirrorHub, IMirrorHub> MirrorHub;
+    public MirrorComponentController(IUnitOfWork unitOfWork, IHubContext<MirrorHub, IMirrorHub> mirrorHub) : base(unitOfWork)
+    {
+        MirrorHub = mirrorHub;
+    }
 
     [HttpGet("mirrorId/{mirrorId}", Name = "GetAllMirrorComponentsByMirrorId")]
     public async Task<MirrorComponent[]> GetAllByMirrorId(int mirrorId)
@@ -79,6 +85,20 @@ public class MirrorComponentController : BaseController
 
         var js = component.GetJavaScript(mirrorComponent.Name);
         return Encoding.ASCII.GetBytes(js);
+    }
+
+    [HttpPost("mirrorComponentId/{mirrorComponentId}/toggle", Name = "ShowMirrorComponent")]
+    public async Task ToggleMirrorComponent(int mirrorComponentId, [FromQuery] bool show)
+    {
+        var mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponentId);
+        if (mirrorComponent == null)
+            return;
+
+        var mirror = await UnitOfWork.Mirrors.GetById(mirrorComponent.MirrorId);
+        if (mirror == null)
+            return;
+
+        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").ToggleMirrorComponents(mirror.UserId, mirror.Name, show, new string[] { mirrorComponent.Name });
     }
 
     [HttpGet("mirrorComponentId/{mirrorComponentId}/retrieve", Name = "RetrieveMirrorComponent")]

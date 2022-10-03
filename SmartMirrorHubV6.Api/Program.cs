@@ -2,12 +2,17 @@ using Microsoft.OpenApi.Models;
 using SmartMirrorHubV6.Api.Database;
 using SmartMirrorHubV6.Api.Database.Models;
 using SmartMirrorHubV6.Api.Database.Repositories;
+using SmartMirrorHubV6.Api.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR(o =>
+    o.EnableDetailedErrors = true
+);
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -52,8 +57,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapControllers();
+
+app.UseRouting();
+
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<MirrorHub>("/mirrorHub");
+});
 
 app.Run();
