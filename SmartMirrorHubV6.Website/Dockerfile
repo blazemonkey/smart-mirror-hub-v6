@@ -10,9 +10,8 @@ WORKDIR /src
 COPY . .
 RUN echo $(ls)
 
-ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Pacific/Auckland
-RUN apt-get update && apt-get install -y tzdata
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN dotnet restore SmartMirrorHubV6.Website/SmartMirrorHubV6.Website.csproj
 RUN dotnet build -c Release -o /app/build
