@@ -155,7 +155,7 @@ public partial class Mirror : BaseComponent
             builder.AddAttribute(2, nameof(MirrorBaseComponent.Mirror), this);
             builder.AddAttribute(2, nameof(MirrorBaseComponent.MirrorComponentId), mc.MirrorComponentId);
             builder.AddAttribute(2, nameof(MirrorBaseComponent.ShowHeader), mc.UiElement.ShowHeader);
-            builder.AddAttribute(2, nameof(MirrorBaseComponent.IsShowing), true);
+            builder.AddAttribute(2, nameof(MirrorBaseComponent.IsShowing), mc.InSchedule);
             builder.AddComponentReferenceCapture(2, mc => OnScreenMirrorComponents.Add((MirrorBaseComponent)mc));
             builder.CloseComponent();
             builder.CloseElement();

@@ -11,4 +11,5 @@ public class MirrorComponentResponse
     public string ComponentAuthor { get; set; }
     public bool ComponentHasJavaScript { get; set; }
     public MirrorComponentUiElement UiElement { get; set; }
+    public bool InSchedule { get; set; }
 }

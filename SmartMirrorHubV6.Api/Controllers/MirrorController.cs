@@ -19,9 +19,23 @@ public class MirrorController : BaseController
     }
 
     [HttpGet(Name = "GetAlMirrors")]
-    public async Task<Mirror[]> GetAll([FromQuery] bool includeComponents)
+    public async Task<Mirror[]> GetAll([FromQuery] bool includeComponents, [FromQuery] bool checkSchedule)
     {
         var mirrors = await UnitOfWork.Mirrors.GetAll(includeComponents);
+        if (checkSchedule)
+        {
+            foreach (var mirror in mirrors)
+            {
+                if (mirror.MirrorComponents == null)
+                    continue;
+
+                foreach (var mc in mirror.MirrorComponents)
+                {
+                    mc.InSchedule = mc.ShowMirrorComponent(mc, mirror);
+                }
+            }
+        }
+
         return mirrors.ToArray();
     }
 

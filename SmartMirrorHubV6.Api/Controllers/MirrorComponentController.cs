@@ -37,6 +37,13 @@ public class MirrorComponentController : BaseController
     {
         var responsesList = new List<MirrorComponentResponse>();
         var mirrorComponents = await UnitOfWork.MirrorComponents.GetAllByUserIdAndMirrorName(userId, mirrorName, false, true);
+        if (mirrorComponents.Any() == false)
+            return null;
+
+        var mirror = await UnitOfWork.Mirrors.GetById(mirrorComponents[0].MirrorId);
+        if (mirror == null)
+            return null;
+
         foreach (var mc in mirrorComponents)
         {
             var component = await UnitOfWork.Components.GetById(mc.ComponentId);
@@ -51,7 +58,8 @@ public class MirrorComponentController : BaseController
                 UiElement = mc.UiElement,
                 ComponentName = component.Name,
                 ComponentAuthor = component.Author,
-                ComponentHasJavaScript = component.HasJavaScript
+                ComponentHasJavaScript = component.HasJavaScript,
+                InSchedule = mc.ShowMirrorComponent(mc, mirror)
             };
 
             responsesList.Add(response);

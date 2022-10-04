@@ -16,7 +16,7 @@ public class UpdateJob : BaseJob
         {
             _logger.LogInformation($"Connecting to {ApiUrl}");
             var client = new MirrorApiClient(ApiUrl, HttpClient);
-            var mirrors = await client.GetAlMirrorsAsync(true);
+            var mirrors = await client.GetAlMirrorsAsync(false, false);
             _logger.LogInformation($"Found {mirrors.Count} mirrors");
 
             var tasks = new List<Task>();

@@ -57,6 +57,13 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "name": "checkSchedule",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -765,6 +772,9 @@
           "lastUpdatedTimeUtc": {
             "type": "string",
             "format": "date-time"
+          },
+          "inSchedule": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -797,6 +807,9 @@
           },
           "uiElement": {
             "$ref": "#/components/schemas/MirrorComponentUiElement"
+          },
+          "inSchedule": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

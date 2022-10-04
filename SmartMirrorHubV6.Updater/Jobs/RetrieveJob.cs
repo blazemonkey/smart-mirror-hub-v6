@@ -16,7 +16,7 @@ public class RetrieveJob : BaseJob
         {
             _logger.LogInformation($"Connecting to {ApiUrl}");
             var client = new MirrorApiClient(ApiUrl, HttpClient);
-            var mirrors = await client.GetAlMirrorsAsync(true);
+            var mirrors = await client.GetAlMirrorsAsync(true, true);
             _logger.LogInformation($"Found {mirrors.Count} mirrors");
 
             var components = await client.GetAllComponentsAsync();
@@ -53,7 +53,7 @@ public class RetrieveJob : BaseJob
                         continue;
                     }
 
-                    if (ShowMirrorComponent(mc, m) == false)
+                    if (mc.InSchedule == false)
                     {
                         _logger.LogInformation($"Skipping '{mc.Name}' component because it is not in schedule");
                         continue;
@@ -76,38 +76,6 @@ public class RetrieveJob : BaseJob
         catch (Exception ex)
         {
             _logger.LogInformation($"An unexpected error has occured: {ex}");
-        }
-    }
-
-    private bool ShowMirrorComponent(MirrorComponent mirrorComponent, Mirror mirror)
-    {
-        var mirrorSchedule = mirror.Schedule;
-        var mirrorComponentSchedule = mirrorComponent.Schedule;
-
-        if (mirrorSchedule.Length != mirrorComponentSchedule.Length)
-            return false;
-
-        try
-        {
-            var timezone = TimeZoneInfo.FindSystemTimeZoneById(mirror.Timezone);
-            var time = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
-
-            var component = mirrorComponentSchedule.Substring((int)time.DayOfWeek * 96, 96); // day
-            component = component.Substring(time.Hour * 4, 4); // hour
-
-            var on = component.Substring(time.Minute / 15, 1); // 15-minute block
-            if (on == "0")
-                return false;
-
-            var global = mirror.Schedule.Substring((int)time.DayOfWeek * 96, 96); // day
-            global = global.Substring(time.Hour * 4, 4); // hour
-
-            var globalOn = component.Substring(time.Minute / 15, 1); // 15-minute block
-            return globalOn == "1";
-        }
-        catch (Exception ex)
-        {
-            return false;
         }
     }
 }
