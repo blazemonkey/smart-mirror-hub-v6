@@ -10,9 +10,6 @@ WORKDIR /src
 COPY . .
 RUN echo $(ls)
 
-ENV TZ=Pacific/Auckland
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
 RUN dotnet restore SmartMirrorHubV6.Website/SmartMirrorHubV6.Website.csproj
 RUN dotnet build -c Release -o /app/build
 
@@ -22,4 +19,6 @@ RUN dotnet publish SmartMirrorHubV6.Website/SmartMirrorHubV6.Website.csproj -c R
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV TZ=Pacific/Auckland
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ENTRYPOINT ["dotnet", "SmartMirrorHubV6.Website.dll"]
