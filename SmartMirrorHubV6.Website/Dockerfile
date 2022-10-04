@@ -11,7 +11,8 @@ COPY . .
 RUN echo $(ls)
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get install -y tzdata
+ENV TZ=Pacific/Auckland
+RUN apt-get update && apt-get install -y tzdata
 
 RUN dotnet restore SmartMirrorHubV6.Website/SmartMirrorHubV6.Website.csproj
 RUN dotnet build -c Release -o /app/build
