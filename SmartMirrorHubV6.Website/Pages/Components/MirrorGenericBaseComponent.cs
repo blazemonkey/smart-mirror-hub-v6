@@ -38,8 +38,15 @@ public abstract class MirrorGenericBaseComponent<T> : MirrorBaseComponent where 
 
     public override void Update(object response)
     {
-        Response = JsonConvert.DeserializeObject<T>(response.ToString());
-        IsShowing = true;
+        var componentResponse = JsonConvert.DeserializeObject<T>(response.ToString());
+        if (string.IsNullOrEmpty(componentResponse.Error) == false)
+            IsShowing = false;
+        else
+        {
+            Response = componentResponse;
+            IsShowing = true;
+        }
+
         InvokeAsync(() => StateHasChanged()).GetAwaiter().GetResult();
     }
 

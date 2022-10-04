@@ -4,6 +4,7 @@ using SmartMirrorHubV6.Api.Database;
 using SmartMirrorHubV6.Api.Database.Models;
 using SmartMirrorHubV6.Api.Hubs;
 using SmartMirrorHubV6.Api.Models;
+using SmartMirrorHubV6.Shared.Components.Base;
 using System.Text.Json;
 
 namespace SmartMirrorHubV6.Api.Controllers;
@@ -59,7 +60,7 @@ public class MirrorController : BaseController
             var refreshResponse = new RefreshComponentResponse()
             {
                 MirrorComponentId = mc.Id,
-                ComponentResponse = JsonSerializer.Deserialize<object>(jsonResponse)
+                ComponentResponse = mc.InSchedule ? JsonSerializer.Deserialize<object>(jsonResponse) : new ComponentResponse() { Error = "Component is not in schedule" }
             };
 
             responses.Add(refreshResponse);            
