@@ -55,6 +55,7 @@ public class MirrorController : BaseController
             if (history == null)
                 continue;
 
+            mc.InSchedule = mc.ShowMirrorComponent(mc, mirror);
             var jsonResponse = history.Response;
 
             var refreshResponse = new RefreshComponentResponse()
