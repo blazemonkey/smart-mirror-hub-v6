@@ -15,6 +15,9 @@ public class MirrorComponent : BaseModel
 
     public bool ShowMirrorComponent(MirrorComponent mirrorComponent, Mirror mirror)
     {
+#if DEBUG
+        return true;
+#else
         var mirrorSchedule = mirror.Schedule;
         var mirrorComponentSchedule = mirrorComponent.Schedule;
 
@@ -43,5 +46,6 @@ public class MirrorComponent : BaseModel
         {
             return false;
         }
+#endif
     }
 }

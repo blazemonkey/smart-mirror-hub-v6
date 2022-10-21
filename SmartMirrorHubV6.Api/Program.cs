@@ -37,6 +37,7 @@ foreach (var type in types)
 }
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 var unitOfWork = app.Services.GetService<IUnitOfWork>();

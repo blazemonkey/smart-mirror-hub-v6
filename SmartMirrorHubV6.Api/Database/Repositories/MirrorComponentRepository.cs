@@ -16,7 +16,7 @@ public class MirrorComponentRepository : BaseRepository, IMirrorComponentReposit
         return result.ToArray();
     }
 
-    public async Task<MirrorComponent> GetById(int id, bool includeSettings = false)
+    public async Task<MirrorComponent> GetById(int id, bool includeSettings = false, bool includeUiElement = false)
     {
         var sql = "select * from mirrors_components where id = @Id";
         using var conn = await OpenConnection();
@@ -29,6 +29,13 @@ public class MirrorComponentRepository : BaseRepository, IMirrorComponentReposit
             sql = "select * from mirrors_components_settings where mirrorcomponentid = @MirrorComponentId";
             var settings = await conn.QueryAsync<MirrorComponentSetting>(sql, new { MirrorComponentId = id });
             result.Settings = settings.ToArray();
+        }
+
+        if (includeUiElement)
+        {
+            sql = "select * from mirrors_components_ui_elements where mirrorcomponentid = @MirrorComponentId";
+            var element = await conn.QuerySingleOrDefaultAsync<MirrorComponentUiElement>(sql, new { MirrorComponentId = id });
+            result.UiElement = element;
         }
 
         return result;

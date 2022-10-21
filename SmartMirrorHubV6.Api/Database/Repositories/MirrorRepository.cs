@@ -32,6 +32,9 @@ public class MirrorRepository : BaseRepository, IMirrorRepository
         var sql = "select * from mirrors where id = @Id";
         using var conn = await OpenConnection();
         var result = await conn.QuerySingleOrDefaultAsync<Mirror>(sql, new { Id = id });
+        if (result == null)
+            return null;
+
         if (includeComponents)
         {
             sql = "select * from mirrors_components where mirrorid = @MirrorId";

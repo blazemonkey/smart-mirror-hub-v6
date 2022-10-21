@@ -51,6 +51,13 @@ public class MirrorController : BaseController
         var responses = new List<RefreshComponentResponse>();
         foreach (var mc in mirror.MirrorComponents)
         {
+            var component = await UnitOfWork.Components.GetById(mc.ComponentId);
+            if (component == null)
+                continue;
+
+            if (component.Interval == 0)
+                continue;
+
             var history = await UnitOfWork.ResponseHistory.GetLatestByMirrorComponentId(mc.Id);
             if (history == null)
                 continue;
@@ -64,9 +71,19 @@ public class MirrorController : BaseController
                 ComponentResponse = mc.InSchedule ? JsonSerializer.Deserialize<object>(jsonResponse) : new ComponentResponse() { Error = "Component is not in schedule" }
             };
 
-            responses.Add(refreshResponse);            
+            responses.Add(refreshResponse);
         }
 
         await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").RefreshMirrorComponents(mirror.UserId, mirror.Name, responses.ToArray());
+    }
+
+    [HttpPost("{mirrorId}/switch", Name = "SwitchMirrorLayer")]
+    public async Task SwitchMirrorLayer(int mirrorId, int layer)
+    {
+        var mirror = await UnitOfWork.Mirrors.GetById(mirrorId, true);
+        if (mirror == null)
+            return;
+
+        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").SwitchMirrorLayer(mirror.UserId, mirror.Name, layer);
     }
 }

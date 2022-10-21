@@ -140,6 +140,38 @@
         }
       }
     },
+    "/Mirror/{mirrorId}/switch": {
+      "post": {
+        "tags": [
+          "Mirror"
+        ],
+        "operationId": "SwitchMirrorLayer",
+        "parameters": [
+          {
+            "name": "mirrorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "layer",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/MirrorComponent/mirrorId/{mirrorId}": {
       "get": {
         "tags": [
@@ -401,6 +433,30 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/MirrorComponent/mirrorComponentId/{mirrorComponentId}/refresh": {
+      "get": {
+        "tags": [
+          "MirrorComponent"
+        ],
+        "operationId": "RefreshMirrorComponent",
+        "parameters": [
+          {
+            "name": "mirrorComponentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }

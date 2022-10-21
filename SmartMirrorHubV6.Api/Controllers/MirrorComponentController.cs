@@ -65,7 +65,7 @@ public class MirrorComponentController : BaseController
             responsesList.Add(response);
         }
 
-        return responsesList.ToArray();
+         return responsesList.ToArray();
     }
 
     [HttpGet("mirrorComponentId/{mirrorComponentId}", Name = "GetMirrorComponent")]
@@ -98,7 +98,7 @@ public class MirrorComponentController : BaseController
     [HttpPost("mirrorComponentId/{mirrorComponentId}/toggle", Name = "ShowMirrorComponent")]
     public async Task ToggleMirrorComponent(int mirrorComponentId, [FromQuery] bool show)
     {
-        var mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponentId);
+        var mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponentId, true, true);
         if (mirrorComponent == null)
             return;
 
@@ -106,6 +106,7 @@ public class MirrorComponentController : BaseController
         if (mirror == null)
             return;
 
+        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").SwitchMirrorLayer(mirror.UserId, mirror.Name, mirrorComponent.UiElement.Layer);
         await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").ToggleMirrorComponents(mirror.UserId, mirror.Name, show, new string[] { mirrorComponent.Name });
     }
 
@@ -177,6 +178,34 @@ public class MirrorComponentController : BaseController
         }
 
         return response;
+    }
+
+    [HttpGet("mirrorComponentId/{mirrorComponentId}/refresh", Name = "RefreshMirrorComponent")]
+    public async Task Refresh(int mirrorComponentId)
+    {
+        var mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponentId, true, true);
+        if (mirrorComponent == null)
+            return;
+
+        var mirror = await UnitOfWork.Mirrors.GetById(mirrorComponent.MirrorId);
+        if (mirror == null)
+            return;
+
+        var component = await UnitOfWork.Components.GetById(mirrorComponent.ComponentId);
+        if (component == null)
+            return;
+
+        mirrorComponent.InSchedule = mirrorComponent.ShowMirrorComponent(mirrorComponent, mirror);
+
+        var response = await Retrieve(mirrorComponentId);
+        var refreshResponse = new RefreshComponentResponse()
+        {
+            MirrorComponentId = mirrorComponent.Id,
+            ComponentResponse = mirrorComponent.InSchedule ? response : new ComponentResponse() { Error = "Component is not in schedule" }
+        };
+
+        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").SwitchMirrorLayer(mirror.UserId, mirror.Name, mirrorComponent.UiElement.Layer);
+        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").RefreshMirrorComponents(mirror.UserId, mirror.Name, new RefreshComponentResponse[] { refreshResponse });
     }
 
     [Produces(typeof(object))]
