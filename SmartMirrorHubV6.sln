@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartMirrorHubV6.Shared", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartMirrorHubV6.Updater", "SmartMirrorHubV6.Updater\SmartMirrorHubV6.Updater.csproj", "{33DD8163-40AE-46A4-95A0-3B73BB52FD78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartMirrorHubV6.Website", "SmartMirrorHubV6.Website\SmartMirrorHubV6.Website.csproj", "{50C60F66-4E81-450A-817F-35F88E11F6CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartMirrorHubV6.Website", "SmartMirrorHubV6.Website\SmartMirrorHubV6.Website.csproj", "{50C60F66-4E81-450A-817F-35F88E11F6CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

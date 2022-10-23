@@ -20,6 +20,7 @@ public partial class Mirror : BaseComponent
     public bool IsLoading { get; set; }
 
     public string ErrorMessage { get; set; }
+    public int CurrentLayer { get; set; }
 
     private RenderFragment ComponentsRender { get; set; }
     private List<MirrorBaseComponent> OnScreenMirrorComponents { get; set; }
@@ -39,6 +40,7 @@ public partial class Mirror : BaseComponent
             }
             else
             {
+                CurrentLayer = 1;
                 await RenderComponent(mirrorComponents.ToArray());
 
                 if (HubConnection != null)
@@ -65,9 +67,15 @@ public partial class Mirror : BaseComponent
                     {
                         var component = OnScreenMirrorComponents.FirstOrDefault(x => x.MirrorComponentId == r.MirrorComponentId);
                         if (component == null)
-                            continue;
+                            continue;                        
 
                         component.Update(r.ComponentResponse);
+                    }
+
+                    var hiddenComponents = OnScreenMirrorComponents.Where(x => x.Layer != CurrentLayer);
+                    foreach (var hc in hiddenComponents)
+                    {
+                        hc.Hide();
                     }
                 });
 
@@ -90,21 +98,41 @@ public partial class Mirror : BaseComponent
                     }
                 });
 
-                //    _hubConnection.On("TriggerMirrorComponents", async (int userId, string mirrorName, string[] mirrorComponentNames) =>
-                //    {
-                //        if (userId != UserId || mirrorName != MirrorName)
-                //            return;
+                HubConnection.On("SwitchMirrorLayer", (int userId, string mirrorName, int layer) =>
+                {
+                    if (userId != UserId || mirrorName != MirrorName)
+                        return;
 
-                //        foreach (var name in mirrorComponentNames)
-                //        {
-                //            var component = OnScreenMirrorComponents.FirstOrDefault(x => x.Name == name);
-                //            if (component == null)
-                //                continue;
+                    CurrentLayer = layer;
 
-                //            await component.Retrieve();
-                //        }
-                //    });
-            }
+                    var hiddenComponents = OnScreenMirrorComponents.Where(x => x.Layer != CurrentLayer);
+                    foreach (var hc in hiddenComponents)
+                    {
+                        hc.Hide();
+                    }
+
+                    var showComponents = OnScreenMirrorComponents.Where(x => x.Layer == CurrentLayer && x.IsShowing == false && x.InSchedule);
+                    foreach (var hc in showComponents)
+                    {
+                        hc.Show();
+                    }
+                });
+
+                    //    _hubConnection.On("TriggerMirrorComponents", async (int userId, string mirrorName, string[] mirrorComponentNames) =>
+                    //    {
+                    //        if (userId != UserId || mirrorName != MirrorName)
+                    //            return;
+
+                    //        foreach (var name in mirrorComponentNames)
+                    //        {
+                    //            var component = OnScreenMirrorComponents.FirstOrDefault(x => x.Name == name);
+                    //            if (component == null)
+                    //                continue;
+
+                    //            await component.Retrieve();
+                    //        }
+                    //    });
+                }
         }
         catch (Exception ex)
         {
@@ -155,7 +183,9 @@ public partial class Mirror : BaseComponent
             builder.AddAttribute(2, nameof(MirrorBaseComponent.Mirror), this);
             builder.AddAttribute(2, nameof(MirrorBaseComponent.MirrorComponentId), mc.MirrorComponentId);
             builder.AddAttribute(2, nameof(MirrorBaseComponent.ShowHeader), mc.UiElement.ShowHeader);
-            builder.AddAttribute(2, nameof(MirrorBaseComponent.IsShowing), mc.InSchedule);
+            builder.AddAttribute(2, nameof(MirrorBaseComponent.InSchedule), mc.InSchedule);
+            builder.AddAttribute(2, nameof(MirrorBaseComponent.IsShowing), mc.UiElement.Layer == 1 ? mc.InSchedule : false);
+            builder.AddAttribute(2, nameof(MirrorBaseComponent.Layer), mc.UiElement.Layer);
             builder.AddComponentReferenceCapture(2, mc => OnScreenMirrorComponents.Add((MirrorBaseComponent)mc));
             builder.CloseComponent();
             builder.CloseElement();

@@ -3,27 +3,32 @@
 
 @if (Response != null && IsShowing)
 {
-    <div class="d-flex flex-row w-100 h-100" style="backdrop-filter: blur(10px); background-color: rgba(255, 255, 255, 0.5);">
+    <div class="d-flex flex-row w-100 h-100">
         <div id="map@(UniqueMapName)" style="width:@(Response.ShowStats ? "calc(100% - 300px)" : "100%");height:100%;"></div>
-        <div class="d-flex flex-column m-2">
-            <div class="mb-2">
-                <div class="map-title">@Response.Name</div>
-                <div class="d-flex flex-row map-summary font-weight-bold">
-                    <div>@((Response.Distance / 1000).ToString("F2"))km</div>
-                    <div class="mx-2">|</div>
-                    <div>@(new TimeSpan(0, 0, Response.MovingTime))</div>
-                    <div class="mx-2">|</div>
-                    <div>@(TimeSpan.FromMinutes(((double)Response.MovingTime / 60) / (double)(Response.Distance / 1000)).ToString("m\\:ss"))/km</div>
+        @if (CurrentActivity != null)
+        {
+            <div class="d-flex flex-column m-2">
+                <div class="mb-2">
+                    <div class="map-title">@CurrentActivity.Name</div>
+                    <div class="d-flex flex-row map-summary font-weight-bold">
+                        <div>@((CurrentActivity.Distance / 1000).ToString("F2"))km</div>
+                        <div class="mx-2">|</div>
+                        <div>@(new System.TimeSpan(0, 0, CurrentActivity.MovingTime))</div>
+                        <div class="mx-2">|</div>
+                        <div>@(System.TimeSpan.FromMinutes(((double)CurrentActivity.MovingTime / 60) / (double)(CurrentActivity.Distance / 1000)).ToString("m\\:ss"))/km</div>
+                    </div>
+                </div>
+                <div class="map-laps">
+                    @foreach (var l in CurrentActivity.Laps)
+                    {
+                        <div class="d-flex flex-row mx-1">
+                            <div class="lap-name">@l.Name</div>
+                            <div class="lap-distance">@((l.Distance / 1000).ToString("F2"))km</div>
+                            <div>@(System.TimeSpan.FromMinutes(((double)l.MovingTime / 60) / (double)(l.Distance / 1000)).ToString("m\\:ss"))/km</div>
+                        </div>
+                    }
                 </div>
             </div>
-            @foreach (var l in Response.Laps)
-                {
-                    <div class="d-flex flex-row mx-1">
-                        <div class="lap-name">@l.Name</div>
-                        <div class="lap-distance">@((l.Distance / 1000).ToString("F2"))km</div>
-                        <div>@(TimeSpan.FromMinutes(((double)l.MovingTime / 60) / (double)(l.Distance / 1000)).ToString("m\\:ss"))/km</div>
-                    </div>
-                }
-        </div>
+        }
     </div>
 }

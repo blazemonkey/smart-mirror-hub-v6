@@ -1,13 +1,14 @@
 ﻿.map-title {
-    font-size: 24px;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .map-summary {
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .map-laps {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .lap-name {

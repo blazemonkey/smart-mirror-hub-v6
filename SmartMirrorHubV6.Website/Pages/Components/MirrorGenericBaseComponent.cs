@@ -47,6 +47,7 @@ public abstract class MirrorGenericBaseComponent<T> : MirrorBaseComponent where 
             IsShowing = true;
         }
 
+        InSchedule = IsShowing;
         InvokeAsync(() => StateHasChanged()).GetAwaiter().GetResult();
     }
 

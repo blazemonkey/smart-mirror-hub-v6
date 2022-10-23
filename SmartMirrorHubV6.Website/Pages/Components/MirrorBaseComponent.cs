@@ -20,6 +20,12 @@ public abstract class MirrorBaseComponent : BaseComponent
     [Parameter]
     public bool IsShowing { get; set; }
 
+    [Parameter]
+    public bool InSchedule { get; set; }
+
+    [Parameter]
+    public int Layer { get; set; }
+
     [Inject]
     public IJSRuntime JsRuntime { get; set; }
     public virtual bool IsOverlay() { return false; }

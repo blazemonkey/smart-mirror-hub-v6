@@ -2,7 +2,7 @@
 
 namespace SmartMirrorHubV6.Website.Pages.Components.Sports;
 
-public partial class StravaComponent : MirrorGenericBaseComponent<StravaResponse>
+public partial class StravaStatsComponent : MirrorGenericBaseComponent<StravaResponse>
 {
     public override string ComponentAuthor => "Strava";
     public override string ComponentName => "Strava Stats";

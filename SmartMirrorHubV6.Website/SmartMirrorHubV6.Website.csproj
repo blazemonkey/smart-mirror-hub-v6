@@ -18,19 +18,16 @@
   <ItemGroup>
     <Compile Remove="Pages\Components\Calendar\CalendarDisplayComponent.razor.cs" />
     <Compile Remove="Pages\Components\Calendar\LunarCalendarComponent.razor.cs" />
-    <Compile Remove="Pages\Components\Sports\StravaMapComponent.razor.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="Pages\Components\Calendar\CalendarDisplayComponent.razor" />
     <Content Remove="Pages\Components\Calendar\LunarCalendarComponent.razor" />
-    <Content Remove="Pages\Components\Sports\StravaMapComponent.razor" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Pages\Components\Calendar\CalendarDisplayComponent.razor.css" />
     <None Remove="Pages\Components\Calendar\LunarCalendarComponent.razor.css" />
-    <None Remove="Pages\Components\Sports\StravaMapComponent.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,10 +58,6 @@
     <Reference Include="Utilities.Common">
       <HintPath>..\Components\Utilities.Common.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Components\Music\" />
   </ItemGroup>
 
 </Project>
