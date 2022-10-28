@@ -123,7 +123,7 @@ public class MirrorComponentController : BaseController
             return;
 
         var mirrorComponent = mirror.MirrorComponents.FirstOrDefault(x => x.ComponentId == component.Id);
-        if (mirror == null)
+        if (mirrorComponent == null)
             return;
 
         mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponent.Id, true, true);

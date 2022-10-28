@@ -55,7 +55,7 @@ public class MirrorRepository : BaseRepository, IMirrorRepository
 
     public async Task<Mirror> GetByVoiceDeviceId(string voiceDeviceId, bool includeComponents = false)
     {
-        var sql = "select * from mirrors m join mirrors_voice_devices where deviceid = @DeviceId";
+        var sql = "select m.* from mirrors m join mirrors_voice_devices where deviceid = @DeviceId";
         using var conn = await OpenConnection();
         var result = await conn.QuerySingleOrDefaultAsync<Mirror>(sql, new { DeviceId = voiceDeviceId });
         if (result == null)
