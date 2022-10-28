@@ -9,4 +9,5 @@ public class Mirror : BaseModel
     public string Schedule { get; set; }
     public string Timezone { get; set; }
     public MirrorComponent[] MirrorComponents { get; set; }
+    public MirrorVoiceDevice[] VoiceDevices { get; set; }
 }

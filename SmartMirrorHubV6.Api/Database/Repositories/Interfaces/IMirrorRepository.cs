@@ -6,4 +6,5 @@ public interface IMirrorRepository
 {
     Task<Mirror[]> GetAll(bool includeComponents = false);
     Task<Mirror> GetById(int id, bool includeComponents = false);
+    Task<Mirror> GetByVoiceDeviceId(string voiceDeviceId, bool includeComponents = false);
 }

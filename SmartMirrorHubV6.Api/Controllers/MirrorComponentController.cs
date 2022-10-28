@@ -110,6 +110,28 @@ public class MirrorComponentController : BaseController
         await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").ToggleMirrorComponents(mirror.UserId, mirror.Name, show, new string[] { mirrorComponent.Name });
     }
 
+    [HttpPost("voiceDeviceId/{voiceDeviceId}/toggle", Name = "ShowMirrorComponentByVoice")]
+    public async Task ToggleMirrorComponentByVoice(string voiceDeviceId, [FromQuery] string toggleType, [FromQuery] string voiceName)
+    {
+        var mirror = await UnitOfWork.Mirrors.GetByVoiceDeviceId(voiceDeviceId, true);
+        if (mirror == null)
+            return;
+
+        var components = await UnitOfWork.Components.GetAll();
+        var component = components.FirstOrDefault(x => x.VoiceName.ToLower() == voiceName.ToLower());
+        if (component == null)
+            return;
+
+        var mirrorComponent = mirror.MirrorComponents.FirstOrDefault(x => x.ComponentId == component.Id);
+        if (mirror == null)
+            return;
+
+        mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponent.Id, true, true);
+
+        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").SwitchMirrorLayer(mirror.UserId, mirror.Name, mirrorComponent.UiElement.Layer);
+        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").ToggleMirrorComponents(mirror.UserId, mirror.Name, toggleType == "show", new string[] { mirrorComponent.Name });
+    }
+
     [HttpGet("mirrorComponentId/{mirrorComponentId}/retrieve", Name = "RetrieveMirrorComponent")]
     public async Task<ComponentResponse> Retrieve(int mirrorComponentId)
     {
@@ -207,6 +229,38 @@ public class MirrorComponentController : BaseController
         await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").SwitchMirrorLayer(mirror.UserId, mirror.Name, mirrorComponent.UiElement.Layer);
         await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").RefreshMirrorComponents(mirror.UserId, mirror.Name, new RefreshComponentResponse[] { refreshResponse });
     }
+
+
+    [HttpGet("voiceDeviceId/{voiceDeviceId}/refresh", Name = "RefreshMirrorComponentByVoice")]
+    public async Task RefreshByVoice(string voiceDeviceId, [FromQuery] string voiceName)
+    {
+        var mirror = await UnitOfWork.Mirrors.GetByVoiceDeviceId(voiceDeviceId, true);
+        if (mirror == null)
+            return;
+
+        var components = await UnitOfWork.Components.GetAll();
+        var component = components.FirstOrDefault(x => x.VoiceName.ToLower() == voiceName.ToLower());
+        if (component == null)
+            return;
+
+        var mirrorComponent = mirror.MirrorComponents.FirstOrDefault(x => x.ComponentId == component.Id);
+        if (mirror == null)
+            return;
+
+        mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponent.Id, true, true);
+        mirrorComponent.InSchedule = mirrorComponent.ShowMirrorComponent(mirrorComponent, mirror);
+
+        var response = await Retrieve(mirrorComponent.Id);
+        var refreshResponse = new RefreshComponentResponse()
+        {
+            MirrorComponentId = mirrorComponent.Id,
+            ComponentResponse = mirrorComponent.InSchedule ? response : new ComponentResponse() { Error = "Component is not in schedule" }
+        };
+
+        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").SwitchMirrorLayer(mirror.UserId, mirror.Name, mirrorComponent.UiElement.Layer);
+        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").RefreshMirrorComponents(mirror.UserId, mirror.Name, new RefreshComponentResponse[] { refreshResponse });
+    }
+
 
     [Produces(typeof(object))]
     [HttpGet("mirrorComponentId/{mirrorComponentId}/history", Name = "GetLatestHistoryMirrorComponent")]

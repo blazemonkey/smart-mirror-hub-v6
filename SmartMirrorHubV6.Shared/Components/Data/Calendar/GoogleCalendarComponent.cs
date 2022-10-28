@@ -1,6 +1,7 @@
 ﻿using SmartMirrorHubV6.Shared.Attributes;
 using SmartMirrorHubV6.Shared.Components.Base;
 using SmartMirrorHubV6.Shared.Enums;
+using System.Xml;
 using Utilities.Common.RestService;
 
 namespace SmartMirrorHubV6.Shared.Components.Data.Calendar;
@@ -38,7 +39,7 @@ public class GoogleCalendarComponent : ApiOAuthComponent
         var calendarItems = new List<GoogleCalendarItem>();
         foreach (var c in filteredCalendars)
         {
-            var calendar = await RestService.Instance.SetAuthorizationHeader(("Bearer", AccessToken)).Get<GoogleCalendarRoot>($"{BaseUrl}/calendars/{c.Id}/events");
+            var calendar = await RestService.Instance.SetAuthorizationHeader(("Bearer", AccessToken)).Get<GoogleCalendarRoot>($"{BaseUrl}/calendars/{c.Id}/events?timeMin={XmlConvert.ToString(DateTime.UtcNow, XmlDateTimeSerializationMode.Utc)}");
             calendarItems.AddRange(calendar.Items);
         }
 
