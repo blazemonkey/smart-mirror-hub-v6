@@ -69,7 +69,7 @@ public partial class Mirror : BaseComponent
                         if (component == null)
                             continue;                        
 
-                        component.Update(r.ComponentResponse, component.Layer == CurrentLayer);
+                        component.Update(r.ComponentResponse);
                     }
 
                     var hiddenComponents = OnScreenMirrorComponents.Where(x => x.Layer != CurrentLayer);

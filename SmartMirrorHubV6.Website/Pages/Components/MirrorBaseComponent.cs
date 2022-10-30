@@ -34,7 +34,7 @@ public abstract class MirrorBaseComponent : BaseComponent
     public abstract string ComponentName { get; }
 
     public abstract Task Retrieve();
-    public abstract void Update(object response, bool show);
+    public abstract void Update(object response);
     public abstract void Show();
     public abstract void Hide();
 }

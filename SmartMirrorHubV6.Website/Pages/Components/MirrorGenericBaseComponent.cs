@@ -35,7 +35,7 @@ public abstract class MirrorGenericBaseComponent<T> : MirrorBaseComponent where 
         }
     }
 
-    public override void Update(object response, bool show)
+    public override void Update(object response)
     {
         var componentResponse = JsonConvert.DeserializeObject<T>(response.ToString());
         if (string.IsNullOrEmpty(componentResponse.Error) == false)
@@ -43,7 +43,7 @@ public abstract class MirrorGenericBaseComponent<T> : MirrorBaseComponent where 
         else
         {
             Response = componentResponse;
-            IsShowing = show;
+            IsShowing = true;
         }
 
         InSchedule = IsShowing;
