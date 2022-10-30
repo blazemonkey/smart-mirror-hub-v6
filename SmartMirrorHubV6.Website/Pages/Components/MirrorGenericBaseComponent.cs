@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Utilities.Common.RestService;
 
 namespace SmartMirrorHubV6.Website.Pages.Components;
 
@@ -36,7 +35,7 @@ public abstract class MirrorGenericBaseComponent<T> : MirrorBaseComponent where 
         }
     }
 
-    public override void Update(object response)
+    public override void Update(object response, bool show)
     {
         var componentResponse = JsonConvert.DeserializeObject<T>(response.ToString());
         if (string.IsNullOrEmpty(componentResponse.Error) == false)
@@ -44,7 +43,7 @@ public abstract class MirrorGenericBaseComponent<T> : MirrorBaseComponent where 
         else
         {
             Response = componentResponse;
-            IsShowing = true;
+            IsShowing = show;
         }
 
         InSchedule = IsShowing;
