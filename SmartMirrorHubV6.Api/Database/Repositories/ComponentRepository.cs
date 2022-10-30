@@ -8,12 +8,14 @@ namespace SmartMirrorHubV6.Api.Database.Repositories;
 public class ComponentRepository : BaseRepository, IComponentRepository
 {
     private ComponentSettingRepository _componentSettingRepository;
+    private ComponentDependsRepository _componentDependsRepository;
     public ComponentRepository(IConfiguration configuration) : base(configuration) 
     {
         _componentSettingRepository = new ComponentSettingRepository(configuration);
+        _componentDependsRepository = new ComponentDependsRepository(configuration);
     }
 
-    public async Task<Component> GetById(int id, bool includeSettings = false)
+    public async Task<Component> GetById(int id, bool includeSettings = false, bool includeDependencies = false)
     {
         var sql = "select * from components where id = @Id";
         using var conn = await OpenConnection();
@@ -24,6 +26,9 @@ public class ComponentRepository : BaseRepository, IComponentRepository
 
         if (includeSettings)
             result.Settings = await _componentSettingRepository.GetByComponentId(result.Id, conn);        
+
+        if (includeDependencies)
+            result.Dependencies = await _componentDependsRepository.GetByComponentId(result.Id, conn);
 
         return result;
     }
@@ -77,6 +82,16 @@ public class ComponentRepository : BaseRepository, IComponentRepository
                 return false;
         }
 
+        foreach (var depends in component.Dependencies)
+        {
+            depends.ComponentId = id;
+            sql = "insert into components_depends (componentId, name, type, displayName, getlatest) values (@ComponentId, @Name, @Type, @DisplayName, @GetLatest)";
+            result = await conn.ExecuteAsync(sql, depends);
+            success = result > 0;
+            if (success == false)
+                return false;
+        }
+
         if (connection == null)
             await conn.CloseAsync();
 
@@ -98,6 +113,7 @@ public class ComponentRepository : BaseRepository, IComponentRepository
             return false;
 
         var dbSettings = await _componentSettingRepository.GetByComponentId(component.Id, conn);
+        var dbDependencies = await _componentDependsRepository.GetByComponentId(component.Id, conn);
         foreach (var setting in component.Settings)
         {
             setting.ComponentId = component.Id;
@@ -121,6 +137,29 @@ public class ComponentRepository : BaseRepository, IComponentRepository
             }
         }
 
+        foreach (var depends in component.Dependencies)
+        {
+            depends.ComponentId = component.Id;
+            var exist = dbDependencies.FirstOrDefault(x => x.Name == depends.Name);
+            if (exist == null)
+            {
+                sql = "insert into components_depends (componentId, name, type, displayName, getlatest) values (@ComponentId, @Name, @Type, @DisplayName, @GetLatest)";
+                result = await conn.ExecuteAsync(sql, depends);
+                success = result > 0;
+                if (success == false)
+                    return false;
+            }
+            else
+            {
+                depends.Id = exist.Id;
+                sql = "update components_depends set name = @Name, type = @Type, displayName = @DisplayName, getlatest = @GetLatest where id = @Id";
+                result = await conn.ExecuteAsync(sql, depends);
+                success = result > 0;
+                if (success == false)
+                    return false;
+            }
+        }
+
         foreach (var setting in dbSettings)
         {
             var exist = component.Settings.FirstOrDefault(x => x.Name == setting.Name);
@@ -129,6 +168,19 @@ public class ComponentRepository : BaseRepository, IComponentRepository
 
             sql = "delete from components_settings where id = @Id";
             result = await conn.ExecuteAsync(sql, new { Id = setting.Id});
+            success = result > 0;
+            if (success == false)
+                return false;
+        }
+
+        foreach (var depends in dbDependencies)
+        {
+            var exist = component.Dependencies.FirstOrDefault(x => x.Name == depends.Name);
+            if (exist != null)
+                continue;
+
+            sql = "delete from components_depends where id = @Id";
+            result = await conn.ExecuteAsync(sql, new { Id = depends.Id });
             success = result > 0;
             if (success == false)
                 return false;

@@ -16,6 +16,7 @@ public class Component : BaseModel
     public string VoiceName { get; set; }
     public bool HasJavaScript { get; set; }
     public ComponentSetting[] Settings { get; set; }
+    public ComponentDepends[] Dependencies { get; set; }
 
     public static explicit operator Component(BaseComponent component)
     {
@@ -46,26 +47,44 @@ public class Component : BaseModel
             var component = (Component)instance;
 
             var settings = new List<ComponentSetting>();
+            var dependencies = new List<ComponentDepends>();
+
             var properties = instance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var p in properties)
             {
                 var componentInputAttribute = p.GetCustomAttribute<ComponentInputAttribute>();
-                if (componentInputAttribute == null)
-                    continue;
-
-                var setting = new ComponentSetting()
+                if (componentInputAttribute != null)
                 {
-                    ComponentId = component.Id,
-                    Name = p.Name,
-                    DisplayName = componentInputAttribute.Name,
-                    Type = p.PropertyType.ToString()
-                };
+                    var setting = new ComponentSetting()
+                    {
+                        ComponentId = component.Id,
+                        Name = p.Name,
+                        DisplayName = componentInputAttribute.Name,
+                        Type = p.PropertyType.ToString()
+                    };
 
-                settings.Add(setting);
+                    settings.Add(setting);
+                }
+
+                var componentDependsAttribute = p.GetCustomAttribute<ComponentDependsAttribute>();
+                if (componentDependsAttribute != null)
+                {
+                    var depends = new ComponentDepends()
+                    {
+                        ComponentId = component.Id,
+                        Name = p.Name,
+                        DisplayName = componentDependsAttribute.Name,
+                        GetLatest = componentDependsAttribute.GetLatest,
+                        Type = p.PropertyType.ToString(),                        
+                    };
+
+                    dependencies.Add(depends);
+                }
             }
 
             component.HasJavaScript = hasJavaScript;
             component.Settings = settings.ToArray();
+            component.Dependencies = dependencies.ToArray();
             components.Add(component);
         }
 

@@ -22,7 +22,7 @@ public abstract class BaseComponent
         return await Get();
     }
 
-    public static BaseComponent GetComponent(string componentAuthor, string componentName, (string PropertyName, object Value)[] settings)
+    public static BaseComponent GetComponent(string componentAuthor, string componentName, (string PropertyName, object Value)[] settings, (string PropertyName, object Value)[] dependencies)
     {
         var types = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsSubclassOf(typeof(BaseComponent)) && x.IsAbstract == false).ToArray();
 
@@ -39,6 +39,16 @@ public abstract class BaseComponent
                 {
                     var setting = settings.FirstOrDefault(x => x.PropertyName == p.Name);
                     p.SetValue(instance, setting.Value);
+                }
+            }
+
+            if (dependencies != null)
+            {
+                var properties = c.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                foreach (var p in properties.Where(x => Attribute.IsDefined(x, typeof(ComponentDependsAttribute))))
+                {
+                    var depends = dependencies.FirstOrDefault(x => x.PropertyName == p.Name);
+                    p.SetValue(instance, depends.Value);
                 }
             }
 

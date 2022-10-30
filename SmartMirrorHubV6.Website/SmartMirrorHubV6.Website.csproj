@@ -9,13 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Pages\Components\Music\Lyrics\**" />
-    <Content Remove="Pages\Components\Music\Lyrics\**" />
-    <EmbeddedResource Remove="Pages\Components\Music\Lyrics\**" />
-    <None Remove="Pages\Components\Music\Lyrics\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Pages\Components\Calendar\CalendarDisplayComponent.razor.cs" />
     <Compile Remove="Pages\Components\Calendar\LunarCalendarComponent.razor.cs" />
   </ItemGroup>

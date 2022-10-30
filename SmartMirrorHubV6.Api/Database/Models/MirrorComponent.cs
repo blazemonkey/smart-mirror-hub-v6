@@ -8,6 +8,7 @@ public class MirrorComponent : BaseModel
     public bool Active { get; set; }
     public string Schedule { get; set; }    
     public MirrorComponentSetting[] Settings { get; set; }
+    public MirrorComponentDepends[] Dependencies { get; set; } = new MirrorComponentDepends[] { };
     public MirrorComponentUiElement UiElement { get; set; } = new MirrorComponentUiElement();
     public int? TokenId { get; set; }
     public DateTime LastUpdatedTimeUtc { get; set; }

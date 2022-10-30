@@ -2,11 +2,11 @@
 
 public class ComponentDependsAttribute : Attribute
 {
-    public string MirrorComponentName { get; set; }
-    public string MirrorComponentIdColumnName { get; set; }
-    public ComponentDependsAttribute(string mirrorComponentName, string mirrorComponentIdColumnName)
+    public string Name { get; set; }
+    public bool GetLatest { get; set; }
+    public ComponentDependsAttribute(string name, bool getLatest)
     {
-        MirrorComponentName = mirrorComponentName;
-        MirrorComponentIdColumnName = mirrorComponentIdColumnName;
+        Name = name;
+        GetLatest = getLatest;
     }
 }

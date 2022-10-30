@@ -71,7 +71,7 @@ public class MirrorComponentController : BaseController
     [HttpGet("mirrorComponentId/{mirrorComponentId}", Name = "GetMirrorComponent")]
     public async Task<MirrorComponent> Get(int mirrorComponentId)
     {
-        var mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponentId, true);
+        var mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponentId, true, true, true);
         return mirrorComponent;
     }
 
@@ -87,7 +87,7 @@ public class MirrorComponentController : BaseController
             return null;
 
         var settings = mirrorComponent.Settings.Select(x => (PropertyName: dbComponent.Settings.FirstOrDefault(z => z.Id == x.ComponentSettingId).Name, Value: GetValue(x, dbComponent.Settings.FirstOrDefault(z => z.Id == x.ComponentSettingId).Type)));
-        var component = BaseComponent.GetComponent(dbComponent.Author, dbComponent.Name, settings.ToArray());
+        var component = BaseComponent.GetComponent(dbComponent.Author, dbComponent.Name, settings.ToArray(), null);
         if (component == null)
             return null;
 
@@ -147,10 +147,29 @@ public class MirrorComponentController : BaseController
         else if (mirror.Live == false)
             return new ComponentResponse() { Error = "Mirror is not Live" };
 
-        var dbComponent = await UnitOfWork.Components.GetById(mirrorComponent.ComponentId, true);
+        var dbComponent = await UnitOfWork.Components.GetById(mirrorComponent.ComponentId, true, true);
         var settings = mirrorComponent.Settings.Select(x => (PropertyName: dbComponent.Settings.FirstOrDefault(z => z.Id == x.ComponentSettingId).Name, Value: GetValue(x, dbComponent.Settings.FirstOrDefault(z => z.Id == x.ComponentSettingId).Type)));
 
-        var component = BaseComponent.GetComponent(dbComponent.Author, dbComponent.Name, settings.ToArray());
+        var dependencies = new List<(string, object)>();
+
+        foreach (var d in mirrorComponent.Dependencies)
+        {
+            var depends = dbComponent.Dependencies.FirstOrDefault(x => x.Id == d.ComponentDependsId);
+            if (depends == null)
+                return new ComponentResponse() { Error = "Could not set a dependent component" };
+
+            if (depends.GetLatest)
+            {
+                await Retrieve(d.DependsMirrorComponentId);
+                Thread.Sleep(2000); // give time for retrieve to be added to database
+            }
+
+            var dependsResponse = await GetHistory(d.DependsMirrorComponentId);
+            var dependsResponseObject = JsonSerializer.Deserialize(dependsResponse.ToString(), GetType(depends.Type));
+            dependencies.Add((depends.Name, dependsResponseObject));
+        }
+
+        var component = BaseComponent.GetComponent(dbComponent.Author, dbComponent.Name, settings.ToArray(), dependencies.ToArray());
         if (component == null)
             return new ComponentResponse() { Error = "Could not find Component" };
 
@@ -205,7 +224,7 @@ public class MirrorComponentController : BaseController
     [HttpGet("mirrorComponentId/{mirrorComponentId}/refresh", Name = "RefreshMirrorComponent")]
     public async Task Refresh(int mirrorComponentId)
     {
-        var mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponentId, true, true);
+        var mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponentId, true, true, true);
         if (mirrorComponent == null)
             return;
 
@@ -220,14 +239,38 @@ public class MirrorComponentController : BaseController
         mirrorComponent.InSchedule = mirrorComponent.ShowMirrorComponent(mirrorComponent, mirror);
 
         var response = await Retrieve(mirrorComponentId);
+        var responseList = new List<RefreshComponentResponse>();
         var refreshResponse = new RefreshComponentResponse()
         {
             MirrorComponentId = mirrorComponent.Id,
             ComponentResponse = mirrorComponent.InSchedule ? response : new ComponentResponse() { Error = "Component is not in schedule" }
         };
 
+        responseList.Add(refreshResponse);
+        if (mirrorComponent.Dependencies.Any())
+        {
+            var dbComponent = await UnitOfWork.Components.GetById(mirrorComponent.ComponentId, true, true);
+            foreach (var d in mirrorComponent.Dependencies)
+            {
+                var depends = dbComponent.Dependencies.FirstOrDefault(x => x.Id == d.ComponentDependsId);
+                if (depends == null)
+                    continue;
+                
+                var dependsResponse = await GetHistory(d.DependsMirrorComponentId);
+                var dependsResponseObject = JsonSerializer.Deserialize(dependsResponse.ToString(), GetType(depends.Type));
+
+                var dependsRefreshResponse = new RefreshComponentResponse()
+                {
+                    MirrorComponentId = d.DependsMirrorComponentId,
+                    ComponentResponse = dependsResponseObject
+                };
+
+                responseList.Add(dependsRefreshResponse);
+            }
+        }
+
         await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").SwitchMirrorLayer(mirror.UserId, mirror.Name, mirrorComponent.UiElement.Layer);
-        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").RefreshMirrorComponents(mirror.UserId, mirror.Name, new RefreshComponentResponse[] { refreshResponse });
+        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").RefreshMirrorComponents(mirror.UserId, mirror.Name, responseList.ToArray());
     }
 
 
@@ -247,18 +290,42 @@ public class MirrorComponentController : BaseController
         if (mirror == null)
             return;
 
-        mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponent.Id, true, true);
+        mirrorComponent = await UnitOfWork.MirrorComponents.GetById(mirrorComponent.Id, true, true, true);
         mirrorComponent.InSchedule = mirrorComponent.ShowMirrorComponent(mirrorComponent, mirror);
 
         var response = await Retrieve(mirrorComponent.Id);
+        var responseList = new List<RefreshComponentResponse>();
         var refreshResponse = new RefreshComponentResponse()
         {
             MirrorComponentId = mirrorComponent.Id,
             ComponentResponse = mirrorComponent.InSchedule ? response : new ComponentResponse() { Error = "Component is not in schedule" }
         };
 
+        responseList.Add(refreshResponse);
+        if (mirrorComponent.Dependencies.Any())
+        {
+            var dbComponent = await UnitOfWork.Components.GetById(mirrorComponent.ComponentId, true, true);
+            foreach (var d in mirrorComponent.Dependencies)
+            {
+                var depends = dbComponent.Dependencies.FirstOrDefault(x => x.Id == d.ComponentDependsId);
+                if (depends == null)
+                    continue;
+
+                var dependsResponse = await GetHistory(d.DependsMirrorComponentId);
+                var dependsResponseObject = JsonSerializer.Deserialize(dependsResponse.ToString(), GetType(depends.Type));
+
+                var dependsRefreshResponse = new RefreshComponentResponse()
+                {
+                    MirrorComponentId = d.DependsMirrorComponentId,
+                    ComponentResponse = dependsResponseObject
+                };
+
+                responseList.Add(dependsRefreshResponse);
+            }
+        }
+
         await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").SwitchMirrorLayer(mirror.UserId, mirror.Name, mirrorComponent.UiElement.Layer);
-        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").RefreshMirrorComponents(mirror.UserId, mirror.Name, new RefreshComponentResponse[] { refreshResponse });
+        await MirrorHub.Clients.Groups($"{mirror.UserId}:{mirror.Name}").RefreshMirrorComponents(mirror.UserId, mirror.Name, responseList.ToArray());
     }
 
 
@@ -335,9 +402,7 @@ public class MirrorComponentController : BaseController
 
     private object GetValue(MirrorComponentSetting setting, string typeName)
     {
-        var type = Type.GetType(typeName);
-        if (type == null)
-            type = Type.GetType(typeName + ", SmartMirrorHubV6.Shared");
+        var type = GetType(typeName);
 
         if (type == typeof(int))
             return int.Parse(setting.IntValue.ToString());
@@ -349,6 +414,15 @@ public class MirrorComponentController : BaseController
             return setting.DateTimeValue;
         else
             return JsonSerializer.Deserialize(setting.JsonValue, type);
+    }
+
+    private Type GetType(string typeName)
+    {
+        var type = Type.GetType(typeName);
+        if (type == null)
+            type = Type.GetType(typeName + ", SmartMirrorHubV6.Shared");
+
+        return type;
     }
 
     public class OAuthRefreshTokenRequest

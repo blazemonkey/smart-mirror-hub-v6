@@ -16,7 +16,7 @@ public class MirrorComponentRepository : BaseRepository, IMirrorComponentReposit
         return result.ToArray();
     }
 
-    public async Task<MirrorComponent> GetById(int id, bool includeSettings = false, bool includeUiElement = false)
+    public async Task<MirrorComponent> GetById(int id, bool includeSettings = false, bool includeUiElement = false, bool includeDependencies = false)
     {
         var sql = "select * from mirrors_components where id = @Id";
         using var conn = await OpenConnection();
@@ -38,10 +38,17 @@ public class MirrorComponentRepository : BaseRepository, IMirrorComponentReposit
             result.UiElement = element;
         }
 
+        if (includeDependencies)
+        {
+            sql = "select * from mirrors_components_depends where mirrorcomponentid = @MirrorComponentId";
+            var depends = await conn.QueryAsync<MirrorComponentDepends>(sql, new { MirrorComponentId = id });
+            result.Dependencies = depends.ToArray();
+        }
+
         return result;
     }
 
-    public async Task<MirrorComponent[]> GetAllByUserIdAndMirrorName(int userId, string mirrorName, bool includeSettings = false, bool includeUiElement = false)
+    public async Task<MirrorComponent[]> GetAllByUserIdAndMirrorName(int userId, string mirrorName, bool includeSettings = false, bool includeUiElement = false, bool includeDependencies = false)
     {
         var sql = "select mc.* from mirrors m join mirrors_components mc on m.id = mc.mirrorid where userId = @userId and m.name = @MirrorName";
         using var conn = await OpenConnection();
@@ -69,6 +76,16 @@ public class MirrorComponentRepository : BaseRepository, IMirrorComponentReposit
             }
         }
 
+        if (includeDependencies)
+        {
+            foreach (var r in result)
+            {
+                sql = "select * from mirrors_components_depends where mirrorcomponentid = @MirrorComponentId"; 
+                var depends = await conn.QueryAsync<MirrorComponentDepends>(sql, new { MirrorComponentId = r.Id });
+                r.Dependencies = depends.ToArray();
+            }
+        }
+       
         return result.ToArray();
     }
 

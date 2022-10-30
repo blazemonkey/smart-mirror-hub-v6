@@ -745,6 +745,13 @@
               "$ref": "#/components/schemas/ComponentSetting"
             },
             "nullable": true
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponentDepends"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -764,6 +771,35 @@
         ],
         "type": "integer",
         "format": "int32"
+      },
+      "ComponentDepends": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "componentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "getLatest": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
       },
       "ComponentResponse": {
         "type": "object",
@@ -891,6 +927,13 @@
             },
             "nullable": true
           },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MirrorComponentDepends"
+            },
+            "nullable": true
+          },
           "uiElement": {
             "$ref": "#/components/schemas/MirrorComponentUiElement"
           },
@@ -905,6 +948,28 @@
           },
           "inSchedule": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MirrorComponentDepends": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mirrorComponentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dependsMirrorComponentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "componentDependsId": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

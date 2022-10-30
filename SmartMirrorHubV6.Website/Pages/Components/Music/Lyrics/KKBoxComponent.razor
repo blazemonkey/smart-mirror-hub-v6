@@ -3,19 +3,10 @@
 
 @if (Response != null && IsShowing)
 {
-    <div class="d-flex flex-column w-100 h-100 align-items-center mb-1 border-bottom pb-1" style="backdrop-filter: blur(10px); background-color: rgba(255, 255, 255, 0.5);">
-        <div class="d-flex flex-row align-items-center m-2">
-            <div class="lyrics-info d-flex flex-column text-center align-items-center">
-                <div>@Response.ArtistNames</div>
-                <div>@Response.SongName</div>
-            </div>
-            <img class="music-album-cover rounded d-block m-1" src="@Response.AlbumCoverUrl" />
-        </div>
-        <div class="d-flex justify-content-center border-top border-white">
-            @foreach (var l in Response.LyricsPages)
-            {
-                <pre class="lyrics-text text-center mx-2">@l</pre>
-            }
-        </div>
+    <div class="d-flex justify-content-center border-top border-white">
+        @foreach (var l in Response.LyricsPages)
+        {
+            <pre class="lyrics-text text-center mx-2">@l</pre>
+        }
     </div>
 }
