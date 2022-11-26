@@ -1,11 +1,12 @@
 stages:
-  - build-api
-  - build-updater
-  - build-website
-  - build-tp-link-scraper
+  - build
+
+default:
+  before_script:
+    - docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
 
 build-api:
-  stage: build-api
+  stage: build
   image: docker
   services: 
     - docker:dind
@@ -14,7 +15,7 @@ build-api:
     - docker push $CI_REGISTRY_IMAGE/api
 
 build-updater:
-  stage: build-updater
+  stage: build
   image: docker
   services: 
     - docker:dind
@@ -23,7 +24,7 @@ build-updater:
     - docker push $CI_REGISTRY_IMAGE/updater
 
 build-website:
-  stage: build-website
+  stage: build
   image: docker
   services: 
     - docker:dind
@@ -32,7 +33,7 @@ build-website:
     - docker push $CI_REGISTRY_IMAGE/website
 
 build-tp-link-scraper:
-  stage: build-tp-link-scraper
+  stage: build
   image: docker
   services: 
     - docker:dind
