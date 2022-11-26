@@ -4,7 +4,7 @@ stages:
   - build-website
   - build-tp-link-scraper
 
-build-api
+build-api:
   stage: build-api
   image: docker
   services: 
@@ -13,7 +13,7 @@ build-api
     - docker build -t $CI_REGISTRY_IMAGE/api -f SmartMirrorHubV6.Api/Dockerfile .
     - docker push $CI_REGISTRY_IMAGE/api
 
-build-updater
+build-updater:
   stage: build-updater
   image: docker
   services: 
@@ -22,7 +22,7 @@ build-updater
     - docker build -t $CI_REGISTRY_IMAGE/updater -f SmartMirrorHubV6.Updater/Dockerfile .
     - docker push $CI_REGISTRY_IMAGE/updater
 
-build-website
+build-website:
   stage: build-website
   image: docker
   services: 
@@ -31,7 +31,7 @@ build-website
     - docker build -t $CI_REGISTRY_IMAGE/website -f SmartMirrorHubV6.Website/Dockerfile .
     - docker push $CI_REGISTRY_IMAGE/website
 
-build-tp-link-scraper
+build-tp-link-scraper:
   stage: build-tp-link-scraper
   image: docker
   services: 
