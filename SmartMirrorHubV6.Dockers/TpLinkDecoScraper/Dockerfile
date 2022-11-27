@@ -1,7 +1,7 @@
 FROM node:slim
 
 WORKDIR /app
-COPY ["package.json", "package-lock.json*", "scraper.js", "./"]
+COPY ["SmartMirrorHubV6.Dockers/TpLinkDecoScraper/package.json", "SmartMirrorHubV6.Dockers/TpLinkDecoScraper/package-lock.json*", "SmartMirrorHubV6.Dockers/TpLinkDecoScraper/scraper.js", "./"]
 RUN npm install
 
 # We don't need the standalone Chromium
