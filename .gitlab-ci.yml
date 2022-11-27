@@ -39,4 +39,4 @@ build-tp-link-scraper:
     - docker:dind
   script:
     - docker build -t $CI_REGISTRY_IMAGE/tp-link-scraper -f SmartMirrorHubV6.Dockers/TpLinkDecoScraper/Dockerfile .
-    - docker push $CI_REGISTRY_IMAGE_tp-link-scraper
+    - docker push $CI_REGISTRY_IMAGE/tp-link-scraper
