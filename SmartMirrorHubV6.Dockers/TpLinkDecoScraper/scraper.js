@@ -9,7 +9,7 @@ import fs from 'fs'
 
   await page.goto('http://tplinkdeco.net/');
   await page.waitForSelector("input[type=password]");
-  await page.type('input[type=password]', 'test');
+  await page.type('input[type=password]', process.env.PASSWORD);
   await page.waitForTimeout(2000);
   await page.click("a[title='LOG IN']");
   await page.waitForSelector("#map-clients");
