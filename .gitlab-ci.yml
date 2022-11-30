@@ -5,6 +5,15 @@ default:
   before_script:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
 
+build-tp-link-scraper:
+  stage: build
+  image: docker
+  services: 
+    - docker:dind
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE/tp-link-scraper -f SmartMirrorHubV6.Dockers/TpLinkDecoScraper/Dockerfile .
+    - docker push $CI_REGISTRY_IMAGE/tp-link-scraper
+
 build-api:
   stage: build
   image: docker
@@ -31,12 +40,3 @@ build-website:
   script:
     - docker build -t $CI_REGISTRY_IMAGE/website -f SmartMirrorHubV6.Website/Dockerfile .
     - docker push $CI_REGISTRY_IMAGE/website
-
-build-tp-link-scraper:
-  stage: build
-  image: docker
-  services: 
-    - docker:dind
-  script:
-    - docker build -t $CI_REGISTRY_IMAGE/tp-link-scraper -f SmartMirrorHubV6.Dockers/TpLinkDecoScraper/Dockerfile .
-    - docker push $CI_REGISTRY_IMAGE/tp-link-scraper
