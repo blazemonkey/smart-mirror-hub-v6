@@ -26,7 +26,7 @@ import fs from 'fs'
     if (hasResults) {   
         var json = JSON.stringify(data);
         console.log(json);
-        fs.writeFileSync('output/devices.json', json);
+        fs.writeFileSync('/app/output/tp-link-scraper-devices.json', json);
     }
     await new Promise(r => setTimeout(r, 1000));
   }

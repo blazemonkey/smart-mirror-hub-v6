@@ -18,5 +18,8 @@ RUN apt-get update && apt-get install gnupg wget -y && \
   
 RUN apt-get update && apt-get install cron -y
 RUN chmod 0644 ./scraper.js
-RUN (crontab -l ; echo "* * * * * /usr/local/bin/node /app/scraper.js") | crontab
-CMD cron
+RUN touch /var/log/cron.log
+RUN (crontab -l ; echo "* * * * * /usr/local/bin/node /app/scraper.js >> /var/log/cron.log") | crontab
+
+# Run the command on container startup
+CMD cron && tail -f /var/log/cron.log
