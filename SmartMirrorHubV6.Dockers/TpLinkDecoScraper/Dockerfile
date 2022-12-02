@@ -15,11 +15,10 @@ RUN apt-get update && apt-get install gnupg wget -y && \
   apt-get update && \
   apt-get install google-chrome-stable -y --no-install-recommends && \
   rm -rf /var/lib/apt/lists/*
-  
-RUN apt-get update && apt-get install cron -y
-RUN chmod 0644 ./scraper.js
-RUN touch /var/log/cron.log
-RUN (crontab -l ; echo "* * * * * /usr/local/bin/node /app/scraper.js >> /var/log/cron.log") | crontab
+RUN apt-get update && apt-get install cron -y && \
+    chmod 0644 ./scraper.js && \
+    touch /var/log/cron.log && \
+    (crontab -l ; echo "* * * * * /usr/local/bin/node /app/scraper.js >> /var/log/cron.log") | crontab
 
 # Run the command on container startup
-CMD cron && tail -f /var/log/cron.log
+CMD printenv > /etc/environment && cron && tail -f /var/log/cron.log
