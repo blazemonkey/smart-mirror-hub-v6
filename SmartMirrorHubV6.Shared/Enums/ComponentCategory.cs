@@ -11,5 +11,6 @@ public enum ComponentCategory
     SocialMedia = 6,
     News = 7,
     Music = 8,
-    Basic = 9
+    Basic = 9,
+    Network = 10
 }

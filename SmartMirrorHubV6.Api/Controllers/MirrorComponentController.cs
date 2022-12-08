@@ -138,9 +138,10 @@ public class MirrorComponentController : BaseController
         var mirrorComponent = await Get(mirrorComponentId);
         if (mirrorComponent == null)
             return new ComponentResponse() { Error = "Could not find Mirror Component" };
+#if !DEBUG
         else if (mirrorComponent.Active == false)
             return new ComponentResponse() { Error = "Mirror Component is not Active" };
-
+#endif
         var mirror = await UnitOfWork.Mirrors.GetById(mirrorComponent.MirrorId);
         if (mirror == null)
             return new ComponentResponse() { Error = "Could not find Mirror" };
@@ -158,13 +159,22 @@ public class MirrorComponentController : BaseController
             if (depends == null)
                 return new ComponentResponse() { Error = "Could not set a dependent component" };
 
-            if (depends.GetLatest)
+            if (depends.GetLatest && d.MirrorComponentId != d.DependsMirrorComponentId) // if it's a self dependency, this can be equal, but force this to not retrieve latest otherwise we get a stack overflow exception
             {
                 await Retrieve(d.DependsMirrorComponentId);
                 Thread.Sleep(2000); // give time for retrieve to be added to database
             }
 
-            var dependsResponse = await GetHistory(d.DependsMirrorComponentId);
+            object dependsResponse = null;
+            if (depends.Type.EndsWith("[]")) // indicates this is an array
+            {
+                var history = await (new ResponseHistoryController(UnitOfWork).GetByMirrorComponentId(d.DependsMirrorComponentId));
+                var successHistory = history.Where(x => x.Success).Select(x => x.Response).ToArray();
+                dependsResponse = $"[{string.Join(",", successHistory)}]";
+            }
+            else
+                dependsResponse = await GetHistory(d.DependsMirrorComponentId);
+
             var dependsResponseObject = JsonSerializer.Deserialize(dependsResponse.ToString(), GetType(depends.Type));
             dependencies.Add((depends.Name, dependsResponseObject));
         }
@@ -255,8 +265,16 @@ public class MirrorComponentController : BaseController
                 var depends = dbComponent.Dependencies.FirstOrDefault(x => x.Id == d.ComponentDependsId);
                 if (depends == null)
                     continue;
-                
-                var dependsResponse = await GetHistory(d.DependsMirrorComponentId);
+
+                object dependsResponse = null;
+                if (depends.Type.EndsWith("[]")) // indicates this is an array
+                {
+                    var history = await (new ResponseHistoryController(UnitOfWork).GetByMirrorComponentId(d.DependsMirrorComponentId));
+                    dependsResponse = history.Select(x => x.Response).ToArray();
+                }   
+                else
+                    dependsResponse = await GetHistory(d.DependsMirrorComponentId);
+
                 var dependsResponseObject = JsonSerializer.Deserialize(dependsResponse.ToString(), GetType(depends.Type));
 
                 var dependsRefreshResponse = new RefreshComponentResponse()

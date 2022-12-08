@@ -1,0 +1,19 @@
+﻿@using SmartMirrorHubV6.Shared.Components.Data.Network;
+@inherits MirrorGenericBaseComponent<TpLinkDecoResponse>
+
+@if (Response != null && IsShowing)
+{
+    <div class="d-flex justify-content-center">
+        @foreach (var r in Response.Records)
+        {
+            <div class="position-relative">
+                <img class="deco-owner-image rounded-circle" src="@r.OwnerImageUrl" />
+                @if (r.ShowStatus)
+                {
+                    var color = r.OwnerStatus == DeviceOwnerStatus.Online ? "green" : r.OwnerStatus == DeviceOwnerStatus.Away ? "orange" : "red";
+                    <span class="position-absolute end-0 bottom-0 deco-owner-status" style="background-color: @color"/>
+                }
+            </div>
+        }
+    </div>
+}
