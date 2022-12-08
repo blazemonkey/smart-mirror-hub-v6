@@ -34,8 +34,9 @@ public class TpLinkDecoComponent : DockerComponent
 
         var fileToOpen = Path.Combine(OutputDirectory, OutputFilename);
         var lastUpdatedTime = File.GetLastWriteTimeUtc(fileToOpen);
-        if (DateTime.UtcNow.Subtract(lastUpdatedTime).TotalSeconds > Interval)
-            return new ComponentResponse() { Error = "File was updated too long ago" };
+        var timeDiff = DateTime.UtcNow.Subtract(lastUpdatedTime).TotalSeconds;
+        if (timeDiff > Interval)
+            return new ComponentResponse() { Error = $"File was updated too long ago: {timeDiff} seconds" };
 
         using var fileStream = File.Open(fileToOpen, FileMode.Open);
         var devices = await JsonSerializer.DeserializeAsync<string[]>(fileStream);
