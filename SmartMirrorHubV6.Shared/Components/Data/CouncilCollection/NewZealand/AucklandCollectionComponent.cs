@@ -74,7 +74,7 @@ public class AucklandCollectionComponent : CouncilCollectionComponent
                 if (!match.Success)
                     continue;
 
-                var type = GetEnumTypeByName<CollectionType>(match.Value);
+                var type = GetEnumTypeByName<CouncilCollectionType>(match.Value);
                 var date = cn.ParentNode.FirstChild.InnerText;
                 if (string.IsNullOrEmpty(date))
                     continue;

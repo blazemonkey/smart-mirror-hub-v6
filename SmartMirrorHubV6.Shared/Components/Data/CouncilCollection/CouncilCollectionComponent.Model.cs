@@ -12,11 +12,11 @@ public class CouncilCollectionResponse : ComponentResponse
 
 public class CouncilCollectionDetailResponse
 {
-    public CollectionType Type { get; set; }
+    public CouncilCollectionType Type { get; set; }
     public DateTime CollectionDate { get; set; }
 }
 
-public enum CollectionType
+public enum CouncilCollectionType
 {
     [Description("Rubbish")]
     Rubbish = 0,
