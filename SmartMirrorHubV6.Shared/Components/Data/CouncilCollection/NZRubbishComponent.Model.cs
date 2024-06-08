@@ -1,7 +1,4 @@
 ﻿using SmartMirrorHubV6.Shared.Components.Base;
-using SmartMirrorHubV6.Shared.Components.Data.Currency;
-using System.ComponentModel;
-using System.Reflection;
 
 namespace SmartMirrorHubV6.Shared.Components.Data.CouncilCollection;
 
@@ -34,7 +31,7 @@ public class CollectionResponse
     /// <summary>
     /// Gets or sets any error that occured during retrieval
     /// </summary>
-    public new string Error { get; set; }
+    public string Error { get; set; }
 }
 
 /// <summary>
